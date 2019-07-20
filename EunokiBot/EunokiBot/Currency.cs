@@ -14,7 +14,9 @@ namespace EunokiBot
             [Command(""), Alias("me", "my"), Summary("Display info about my money.")]
             public async Task Me()
             {
-                await Data.Data.SaveUser(await UserModel.CreateAsync(Context.User.Id));
+                //Data.Data.SaveUser(new UserModel(Context.User.Id));
+                UserModel user = Data.Data.GetUser(Context.User.Id);
+                await Context.Channel.SendMessageAsync($":tada: Your ID in database matches: {user.UserID}");
             }
 
             [Command("give"), Summary("Used to give people stones.")]

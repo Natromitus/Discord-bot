@@ -1,13 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
-
-namespace EunokiBot
+﻿namespace EunokiBot
 {
     public class UserModel
     {
-        [Key]
         public ulong UserID { get; set; }
         public int Warnings { get; set; }
+        public int Messages { get; set; }
+
         public int Level { get; set; }
         public int XP { get; set; }
         public int Money { get; set; }
@@ -15,30 +13,16 @@ namespace EunokiBot
         public int Wins { get; set; }
         public int Lost { get; set; }
 
-        private UserModel() { }
-
-        public static async Task<UserModel> CreateAsync(ulong id)
-        {
-            UserModel obj = new UserModel();
-            await obj.InitializeAsync(id);
-            return obj;
-        }
-
-        private async Task InitializeAsync(ulong id)
+        public UserModel(ulong id)
         {
             UserID = id;
-            Warnings = XP = Money = Quests = Wins = Lost = 0;
+            Warnings = Messages = XP = Money = Quests = Wins = Lost = 0;
             Level = 1;
         }
 
-        // Items?
+        public UserModel()
+        {
 
-        // Quests
-
-        // Accomplishments
-        // public int FinishedQuests { get; set; }
-        // Event trophies
-
-        // public int Effect
+        }
     }
 }

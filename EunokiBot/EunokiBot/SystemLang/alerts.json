@@ -1,5 +1,5 @@
 {
-  "TEST": "Hello world!",
-  "WELCOME_&NAME": "WELCOME TO THE SERVER {0}!",
-  "SECRET_&NUMBER":  "SECRET IS {0}"
+  "WELCOME_&MENTION_&GUILDNAME": "Welcome {0} to {1}!",
+  "SECRET_&NUMBER": "SECRET IS {0}",
+  "JOINDM_&NAME": "Hello {0}!\nPlease read our rules & info."
 }

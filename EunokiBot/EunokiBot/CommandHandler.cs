@@ -31,6 +31,7 @@ namespace EunokiBot
             SocketCommandContext context = new SocketCommandContext(_client, sMessage);
 
             int nArsPos = 0;
+
             if (sMessage.HasStringPrefix(Config.Bot.cmdPrefix, ref nArsPos) ||
                 sMessage.HasMentionPrefix(_client.CurrentUser, ref nArsPos))
             {

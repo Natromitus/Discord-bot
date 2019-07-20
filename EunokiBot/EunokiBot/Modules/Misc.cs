@@ -12,6 +12,22 @@ namespace EunokiBot.Modules
 {
     public class Misc : ModuleBase<SocketCommandContext>
     {
+        [Command("register")]
+        public async Task RegisterAsync()
+        {
+            UserModel user = Data.Data.GetUser(Context.User.Id);
+
+            if(user != null)
+            {
+                await Context.Channel.SendMessageAsync(":x: You are already registered!");
+                return;
+            }
+
+            Data.Data.SaveUser(new UserModel(Context.User.Id));
+            await Context.Channel.SendMessageAsync(":tada: You have been sucessfully registered!");
+        }
+
+
         [Command("secret")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task Secret()

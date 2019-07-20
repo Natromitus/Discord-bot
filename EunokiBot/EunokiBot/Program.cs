@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Linq;
 
 using Discord;
 using Discord.WebSocket;
@@ -12,7 +13,10 @@ namespace EunokiBot
     class Program
     {
         DiscordSocketClient _client;
-        CommandHandler _handler;
+        CommandHandler _cmdHandler;
+        JoinHandler _joinHandler;
+
+        public DiscordSocketClient Client { get => _client; }
 
         static void Main(string[] args)
             => new Program().MainAsync().GetAwaiter().GetResult();
@@ -26,12 +30,40 @@ namespace EunokiBot
             { LogLevel = LogSeverity.Verbose });
 
             _client.Log += Log;
-            await _client.LoginAsync(TokenType.Bot, Config.Bot.token);
-            await _client.StartAsync();
+            await Client.LoginAsync(TokenType.Bot, Config.Bot.token);
+            await Client.StartAsync();
 
-            _handler = new CommandHandler();
-            await _handler.InitializeAsync(_client);
+            _cmdHandler = new CommandHandler();
+            await _cmdHandler.InitializeAsync(Client);
+
+            //_joinHandler = new JoinHandler();
+            //Client.UserJoined += _joinHandler.OnUserJoin;
+            _client.UserJoined += OnUserJoin;
+
             await Task.Delay(-1);
+        }
+
+        public async Task OnUserJoin(SocketGuildUser user)
+        {
+            UserModel userModel = Data.Data.GetUser(user.Id);
+            if (userModel == null)
+                Data.Data.SaveUser(new UserModel(user.Id));
+
+            var channel = _client.GetChannel(573131665660968972) as SocketTextChannel;
+            if(channel == null)
+                return;
+
+            await channel.SendMessageAsync(Utilities.GetAlert("WELCOME_&MENTION_&GUILDNAME", user.Mention, channel.Guild.Name));
+            SocketGuild guild = _client.GetGuild(573131665660968970) as SocketGuild;
+            if (guild == null)
+                return;
+
+            IRole role = channel.Guild.Roles.FirstOrDefault(obj => obj.Name.ToString() == "Test Role");
+
+            IDMChannel dmChannel = await user.GetOrCreateDMChannelAsync();
+            await dmChannel.SendMessageAsync(Utilities.GetAlert("JOINDM_&NAME", user.Mention));
+
+            await user.AddRoleAsync(role);
         }
 
         private async Task Log(LogMessage sMsg)
