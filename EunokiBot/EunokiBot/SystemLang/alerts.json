@@ -1,0 +1,5 @@
+{
+  "TEST": "Hello world!",
+  "WELCOME_&NAME": "WELCOME TO THE SERVER {0}!",
+  "SECRET_&NUMBER":  "SECRET IS {0}"
+}
