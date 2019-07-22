@@ -4,18 +4,20 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
+using EunokiBot.Model;
+
 namespace EunokiBot
 {
     public class Currency
     {
-        [Group("Money"), Summary("Group managing money commands.")]
+        [Group("money"), Summary("Group managing money commands.")]
         public class MoneyGroup : ModuleBase<SocketCommandContext>
         {
             [Command(""), Alias("me", "my"), Summary("Display info about my money.")]
             public async Task Me()
             {
                 //Data.Data.SaveUser(new UserModel(Context.User.Id));
-                UserModel user = Data.Data.GetUser(Context.User.Id);
+                User user = Data.Data.GetUser(Context.User.Id);
                 await Context.Channel.SendMessageAsync($":tada: Your ID in database matches: {user.UserID}");
             }
 

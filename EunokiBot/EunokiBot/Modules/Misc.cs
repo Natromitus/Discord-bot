@@ -8,6 +8,8 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
+using EunokiBot.Model;
+
 namespace EunokiBot.Modules
 {
     public class Misc : ModuleBase<SocketCommandContext>
@@ -15,7 +17,7 @@ namespace EunokiBot.Modules
         [Command("register")]
         public async Task RegisterAsync()
         {
-            UserModel user = Data.Data.GetUser(Context.User.Id);
+            User user = Data.Data.GetUser(Context.User.Id);
 
             if(user != null)
             {
@@ -23,7 +25,7 @@ namespace EunokiBot.Modules
                 return;
             }
 
-            Data.Data.SaveUser(new UserModel(Context.User.Id));
+            Data.Data.CreateUser(new User(Context.User.Id));
             await Context.Channel.SendMessageAsync(":tada: You have been sucessfully registered!");
         }
 

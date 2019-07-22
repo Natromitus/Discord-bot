@@ -8,13 +8,14 @@ using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
 
+using EunokiBot.Model;
+
 namespace EunokiBot
 {
     class Program
     {
         DiscordSocketClient _client;
         CommandHandler _cmdHandler;
-        JoinHandler _joinHandler;
 
         public DiscordSocketClient Client { get => _client; }
 
@@ -45,9 +46,9 @@ namespace EunokiBot
 
         public async Task OnUserJoin(SocketGuildUser user)
         {
-            UserModel userModel = Data.Data.GetUser(user.Id);
+            User userModel = Data.Data.GetUser(user.Id);
             if (userModel == null)
-                Data.Data.SaveUser(new UserModel(user.Id));
+                Data.Data.CreateUser(new User(user.Id));
 
             var channel = _client.GetChannel(573131665660968972) as SocketTextChannel;
             if(channel == null)
