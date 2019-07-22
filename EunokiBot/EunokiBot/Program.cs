@@ -46,9 +46,9 @@ namespace EunokiBot
 
         public async Task OnUserJoin(SocketGuildUser user)
         {
-            User userModel = Data.Data.GetUser(user.Id);
+            User userModel = SQL.Singleton.GetUser(user.Id);
             if (userModel == null)
-                Data.Data.CreateUser(new User(user.Id));
+                SQL.Singleton.CreateUser(new User(user.Id));
 
             var channel = _client.GetChannel(573131665660968972) as SocketTextChannel;
             if(channel == null)
@@ -70,6 +70,8 @@ namespace EunokiBot
         private async Task Log(LogMessage sMsg)
         {
             Console.WriteLine(sMsg.Message);
+            if(sMsg.Exception != null)
+                Console.WriteLine(sMsg.Exception);
         }
     }
 }

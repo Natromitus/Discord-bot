@@ -29,7 +29,7 @@ namespace EunokiBot
                 return;
 
             SocketCommandContext context = new SocketCommandContext(_client, sMessage);
-            Data.Data.IncrementUserMessage(context.User.Id);
+            SQL.Singleton.IncrementUserMessage(context.User.Id);
 
             int nArsPos = 0;
 

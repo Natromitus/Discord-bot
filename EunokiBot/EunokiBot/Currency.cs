@@ -17,7 +17,7 @@ namespace EunokiBot
             public async Task Me()
             {
                 //Data.Data.SaveUser(new UserModel(Context.User.Id));
-                User user = Data.Data.GetUser(Context.User.Id);
+                User user = SQL.Singleton.GetUser(Context.User.Id);
                 await Context.Channel.SendMessageAsync($":tada: Your ID in database matches: {user.UserID}");
             }
 

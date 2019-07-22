@@ -1,28 +1,29 @@
 ﻿namespace EunokiBot.Model
 {
-    public class User
+    public class User : Root
     {
         public long SQLUser_ID { get; private set; }
         public int Warnings { get; private set; }
         public int Messages { get; private set; }
 
         public int Level { get; private set; }
-        public int XP { get; private set; }
-        /*
+        public int XP
         {
             get { return m_nXP; }
             set
             {
-                m_nXP = value;
-                if (m_nXP >= Data.Data.GetLevelGapByIndex(Level + 1))
+                if (!SetField<int>(ref m_nXP, value))
+                    return;
+
+                if (m_nXP >= SQL.Singleton.GetLevelGapByIndex(Level + 1))
                     ++Level;
             }
-        }*/
+        }
+
         public int Money { get; private set; }
         public int Quests { get; private set; }
         public int Wins { get; private set; }
         public int Lost { get; private set; }
-
         public ulong UserID
         {
             get
@@ -34,8 +35,8 @@
                 SQLUser_ID = (long)value;
             }
         }
-
         private int m_nXP;
+
 
         public User(ulong id)
         {
@@ -47,6 +48,16 @@
         public User()
         {
 
+        }
+
+        protected override string GetTableName()
+        {
+            return "Users";
+        }
+
+        protected override ulong GetUserID()
+        {
+            return UserID;
         }
     }
 }
