@@ -4,11 +4,11 @@ using System.Text;
 
 namespace EunokiBot
 {
-    public class Suspender : IDisposable
+    public class ReadSuspender : IDisposable
     {
         private static int _count = 0;
 
-        public Suspender()
+        public ReadSuspender()
         {
             ++_count;
         }

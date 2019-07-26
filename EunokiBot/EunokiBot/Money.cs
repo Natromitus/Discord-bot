@@ -8,7 +8,7 @@ using EunokiBot.Model;
 
 namespace EunokiBot
 {
-    public class Currency
+    public class Money
     {
         [Group("money"), Summary("Group managing money commands.")]
         public class MoneyGroup : ModuleBase<SocketCommandContext>
@@ -16,17 +16,13 @@ namespace EunokiBot
             [Command(""), Alias("me", "my"), Summary("Display info about my money.")]
             public async Task Me()
             {
-                //Data.Data.SaveUser(new UserModel(Context.User.Id));
-                User user = SQL.Singleton.GetUser(Context.User.Id);
-                await Context.Channel.SendMessageAsync($":tada: Your ID in database matches: {user.UserID}");
+                User.NewRecord(new User(Context.User.Id));
+                Inventory.NewRecord(new Inventory(Context.User.Id));
             }
 
             [Command("give"), Summary("Used to give people stones.")]
             public async Task Give(IUser user = null, int nAmount = 0)
             {
-                // give @Natromitus 50
-                // $money give @Natromitus 50
-
                 if (user == null)
                 {
                     await Context.Channel.SendMessageAsync(":x: Syntax error: money give <user> <amount>");
@@ -41,7 +37,7 @@ namespace EunokiBot
 
                 if(nAmount == 0)
                 {
-                    await Context.Channel.SendMessageAsync(":x: You need to specify a valid amount stones to give.");
+                    await Context.Channel.SendMessageAsync(":x: You need to specify a valid amount of money to give.");
                     return;
                 }
 
@@ -54,6 +50,9 @@ namespace EunokiBot
                     await Context.Channel.SendMessageAsync(":x: You don't have permission to use this command.");
                     return;
                 }
+
+                User modelUser = User.Get(user.Id);
+                modelUser.Money += nAmount;
 
                 await Context.Channel.SendMessageAsync($":tada: {user.Mention} you have received {nAmount} money!");
             }

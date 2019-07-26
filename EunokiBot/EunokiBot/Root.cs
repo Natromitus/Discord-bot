@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace EunokiBot
 {
-    public class Root
+    public abstract class Root
     {
         protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
@@ -12,21 +12,17 @@ namespace EunokiBot
 
             field = value;
 
-            if (Suspender.IsSuspended)
+            if (ReadSuspender.IsSuspended)
                 return false;
 
-            SQL.Singleton.UpdateValue(GetTableName(), propertyName, value, GetUserID());
+            if(!WriteSuspender.IsSuspended)
+                SQL.Singleton.UpdateValue(OnGetTableName(), propertyName, value, OnGetPrimaryKeyName(), OnGetPrimaryKeyValue());
 
             return true;
         }
 
-        protected virtual string GetTableName()
-        {
-            return null;
-        }
-        protected virtual ulong GetUserID()
-        {
-            return 0;
-        }
+        protected abstract string OnGetTableName();
+        protected abstract string OnGetPrimaryKeyName();
+        protected abstract object OnGetPrimaryKeyValue();
     }
 }

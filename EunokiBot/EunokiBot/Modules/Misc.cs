@@ -17,7 +17,7 @@ namespace EunokiBot.Modules
         [Command("register")]
         public async Task RegisterAsync()
         {
-            User user = SQL.Singleton.GetUser(Context.User.Id);
+            User user = User.Get(Context.User.Id);
 
             if(user != null)
             {
@@ -25,7 +25,7 @@ namespace EunokiBot.Modules
                 return;
             }
 
-            SQL.Singleton.CreateUser(new User(Context.User.Id));
+            User.NewRecord(new User(Context.User.Id));
             await Context.Channel.SendMessageAsync(":tada: You have been sucessfully registered!");
         }
 

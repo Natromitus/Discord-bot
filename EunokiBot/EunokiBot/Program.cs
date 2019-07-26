@@ -14,16 +14,25 @@ namespace EunokiBot
 {
     class Program
     {
-        DiscordSocketClient _client;
-        CommandHandler _cmdHandler;
+        #region Fields
+        private static Program m_singleton;
+        private DiscordSocketClient _client;
+        private CommandHandler _cmdHandler;
+        private Alerts _alertHandler;
+        #endregion
 
-        public DiscordSocketClient Client { get => _client; }
+        #region Properties
+        public static Program Singleton => m_singleton;
+        public DiscordSocketClient Client => _client;
+        public Alerts AlertsHandler => _alertHandler;
+        #endregion
 
         static void Main(string[] args)
             => new Program().MainAsync().GetAwaiter().GetResult();
 
         public async Task MainAsync()
         {
+            m_singleton = this;
             if (String.IsNullOrEmpty(Config.Bot.token))
                 return;
 
@@ -31,41 +40,19 @@ namespace EunokiBot
             { LogLevel = LogSeverity.Verbose });
 
             _client.Log += Log;
-            await Client.LoginAsync(TokenType.Bot, Config.Bot.token);
-            await Client.StartAsync();
+            await _client.LoginAsync(TokenType.Bot, Config.Bot.token);
+            await _client.StartAsync();
 
             _cmdHandler = new CommandHandler();
-            await _cmdHandler.InitializeAsync(Client);
+            await _cmdHandler.InitializeAsync(_client);
 
-            //_joinHandler = new JoinHandler();
-            //Client.UserJoined += _joinHandler.OnUserJoin;
-            _client.UserJoined += OnUserJoin;
+            _alertHandler = new Alerts();
+            _client.UserJoined += _alertHandler.OnUserJoin;
 
             await Task.Delay(-1);
         }
 
-        public async Task OnUserJoin(SocketGuildUser user)
-        {
-            User userModel = SQL.Singleton.GetUser(user.Id);
-            if (userModel == null)
-                SQL.Singleton.CreateUser(new User(user.Id));
-
-            var channel = _client.GetChannel(573131665660968972) as SocketTextChannel;
-            if(channel == null)
-                return;
-
-            await channel.SendMessageAsync(Utilities.GetAlert("WELCOME_&MENTION_&GUILDNAME", user.Mention, channel.Guild.Name));
-            SocketGuild guild = _client.GetGuild(573131665660968970) as SocketGuild;
-            if (guild == null)
-                return;
-
-            IRole role = channel.Guild.Roles.FirstOrDefault(obj => obj.Name.ToString() == "Test Role");
-
-            IDMChannel dmChannel = await user.GetOrCreateDMChannelAsync();
-            await dmChannel.SendMessageAsync(Utilities.GetAlert("JOINDM_&NAME", user.Mention));
-
-            await user.AddRoleAsync(role);
-        }
+        
 
         private async Task Log(LogMessage sMsg)
         {

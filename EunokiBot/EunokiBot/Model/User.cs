@@ -1,12 +1,60 @@
-﻿namespace EunokiBot.Model
+﻿using System.Linq;
+using Dapper;
+
+namespace EunokiBot.Model
 {
     public class User : Root
     {
-        public long SQLUser_ID { get; private set; }
-        public int Warnings { get; private set; }
-        public int Messages { get; private set; }
+        #region Fields
+        private const string m_sTableName = "Users";
+        private const string m_sPrimaryKey = "UserID";
+        private int m_nWarnings;
+        private int m_nMessages;
+        private int m_nLevel;
+        private int m_nXP;
+        private int m_nMoney;
+        private int m_nQuests;
+        private int m_nWins;
+        private int m_nLost;
+        #endregion
 
-        public int Level { get; private set; }
+        #region Properties
+        public long SQLUser_ID { get; private set; }
+        public int Warnings
+        {
+            get { return m_nWarnings; }
+            set
+            {
+                if (!SetField<int>(ref m_nMessages, value))
+                    return;
+
+                if (value >= 3)
+                    _ = Program.Singleton.AlertsHandler.OnWarning(UserID, value);
+            }
+        }
+        public int Messages
+        {
+            get { return m_nMessages; }
+            set
+            {
+                if (!SetField<int>(ref m_nMessages, value))
+                    return;
+
+                XP += 2;
+            }
+        }
+
+        public int Level
+        {
+            get { return m_nLevel; }
+            set
+            {
+                if (!SetField<int>(ref m_nLevel, value))
+                    return;
+
+                _ = Program.Singleton.AlertsHandler.OnLevelUp(UserID, value);
+            }
+        }
         public int XP
         {
             get { return m_nXP; }
@@ -20,10 +68,42 @@
             }
         }
 
-        public int Money { get; private set; }
-        public int Quests { get; private set; }
-        public int Wins { get; private set; }
-        public int Lost { get; private set; }
+        public int Money
+        {
+            get { return m_nMoney; }
+            set
+            {
+                SetField<int>(ref m_nMoney, value);
+            }
+        }
+
+        public int Quests
+        {
+            get { return m_nQuests; }
+            set
+            {
+                SetField<int>(ref m_nQuests, value);
+            }
+        }
+
+        public int Wins
+        {
+            get { return m_nWins; }
+            set
+            {
+                SetField<int>(ref m_nWins, value);
+            }
+        }
+
+        public int Lost
+        {
+            get { return m_nLost; }
+            set
+            {
+                SetField<int>(ref m_nLost, value);
+            }
+        }
+        
         public ulong UserID
         {
             get
@@ -35,8 +115,7 @@
                 SQLUser_ID = (long)value;
             }
         }
-        private int m_nXP;
-
+        #endregion
 
         public User(ulong id)
         {
@@ -45,19 +124,28 @@
             Level = 1;
         }
 
-        public User()
+        protected User()
         {
-
         }
 
-        protected override string GetTableName()
+        public static User Get(ulong ulUserID)
         {
-            return "Users";
+            using(WriteSuspender wSus = new WriteSuspender())
+            using (ReadSuspender rSus = new ReadSuspender())
+            {
+                return SQL.Singleton.Connection.Query<User>(
+                    $"SELECT * FROM Users WHERE UserID = {(long)ulUserID}").FirstOrDefault();
+            }
         }
 
-        protected override ulong GetUserID()
+        public static void NewRecord(User user)
         {
-            return UserID;
+            SQL.Singleton.Connection.Execute("INSERT INTO Users (UserID, Warnings, Messages, Level, XP, Money, Quests, Wins, Lost)" +
+                " VALUES (@UserID, @Warnings, @Messages, @Level, @XP, @Money, @Quests, @Wins, @Lost)", user);
         }
+
+        protected override string OnGetTableName() => m_sTableName;
+        protected override string OnGetPrimaryKeyName() => m_sPrimaryKey;
+        protected override object OnGetPrimaryKeyValue() => SQLUser_ID;
     }
 }
