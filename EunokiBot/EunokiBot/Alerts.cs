@@ -48,7 +48,7 @@ namespace EunokiBot
 
             IRole role = channel.Guild.Roles.FirstOrDefault(obj => obj.Name.ToString() == $"Level {nLevel}");
             RemoveLevels(user, channel);
-             await user.AddRoleAsync(role);
+            await user.AddRoleAsync(role);
 
             _ = await channel.SendMessageAsync($"{user.Mention} has just reached {nLevel} level!");
         }
@@ -75,4 +75,6 @@ namespace EunokiBot
             user.RemoveRolesAsync(levels.AsEnumerable());
         }
     }
+
 }
+    

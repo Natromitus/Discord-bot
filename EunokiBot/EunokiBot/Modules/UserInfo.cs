@@ -7,6 +7,8 @@ using Discord.Commands;
 using Discord.WebSocket;
 
 using EunokiBot.Model;
+using Discord.Rest;
+using System.IO;
 
 namespace EunokiBot
 {
@@ -26,6 +28,21 @@ namespace EunokiBot
                 if (inventory == null)
                     return;
 
+                SocketTextChannel channel = Context.Guild.GetChannel(606567031730601985) as SocketTextChannel;
+                if (channel == null)
+                    return;
+
+                int[] arIDs = new int[]
+                { inventory.ItemID1, inventory.ItemID2, inventory.ItemID3 };
+                int[] arAmounts = new int[]
+                { inventory.Amount1, inventory.Amount2, inventory.Amount3 };
+
+                ImageManagment.InventoryImages.CreateInventoryImage(arIDs, arAmounts);
+
+                RestUserMessage picture = await channel.SendFileAsync(
+                    Path.Combine(ImageManagment.InventoryImages.FilePath, "buffer.png"), string.Empty);
+                string imgurl = picture.Attachments.First().Url;
+
                 var embed = new EmbedBuilder
                 {
                     Author = new EmbedAuthorBuilder
@@ -39,17 +56,13 @@ namespace EunokiBot
                     $"Money: {user.Money}",
                     Color = Color.Blue
                 };
-                for(int i = 0; i <= 2; ++i)
-                {
-                    embed.AddField(new EmbedFieldBuilder()
-                    {
-                        IsInline = true,
-                        Name = Item.GetItemByID(inventory.GetID(i)).Name + " x" + inventory.GetAmount(i),
-                        Value = Item.GetItemByID(inventory.GetID(i)).Description
-                    });
-                }
 
-                _ = Context.Channel.SendMessageAsync("", false, embed.Build());
+                embed.WithImageUrl(imgurl);
+
+                File.Delete(@"D:\Eunoki\DiscordBotTextures\buffer.png");
+                await Context.Channel.SendMessageAsync("", false, embed.Build());
+                await Task.Delay(500);
+                _ = picture.DeleteAsync();
             }
         }
     }

@@ -52,8 +52,6 @@ namespace EunokiBot
             await Task.Delay(-1);
         }
 
-        
-
         private async Task Log(LogMessage sMsg)
         {
             Console.WriteLine(sMsg.Message);
