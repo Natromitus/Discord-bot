@@ -32,6 +32,7 @@ namespace EunokiBot.Model
                     _ = Program.Singleton.AlertsHandler.OnWarning(UserID, value);
             }
         }
+
         public int Messages
         {
             get { return m_nMessages; }
@@ -40,7 +41,7 @@ namespace EunokiBot.Model
                 if (!SetField<int>(ref m_nMessages, value))
                     return;
 
-                XP += 2;
+                XP += SQL.Singleton.GetValue<int>("Levels", "XPPerMessage", "Level", Level);
             }
         }
 
@@ -55,6 +56,7 @@ namespace EunokiBot.Model
                 _ = Program.Singleton.AlertsHandler.OnLevelUp(UserID, value);
             }
         }
+
         public int XP
         {
             get { return m_nXP; }
@@ -134,14 +136,15 @@ namespace EunokiBot.Model
             using (ReadSuspender rSus = new ReadSuspender())
             {
                 return SQL.Singleton.Connection.Query<User>(
-                    $"SELECT * FROM Users WHERE UserID = {(long)ulUserID}").FirstOrDefault();
+                    $"SELECT * FROM Users WHERE {m_sPrimaryKey} = {(long)ulUserID}").FirstOrDefault();
             }
         }
 
         public static void NewRecord(User user)
         {
-            SQL.Singleton.Connection.Execute("INSERT INTO Users (UserID, Warnings, Messages, Level, XP, Money, Quests, Wins, Lost)" +
-                " VALUES (@UserID, @Warnings, @Messages, @Level, @XP, @Money, @Quests, @Wins, @Lost)", user);
+            SQL.Singleton.Connection.Execute($"INSERT INTO {m_sTableName}" +
+                $"({m_sPrimaryKey}, Warnings, Messages, Level, XP, Money, Quests, Wins, Lost)" +
+                $" VALUES (@{m_sPrimaryKey}, @Warnings, @Messages, @Level, @XP, @Money, @Quests, @Wins, @Lost)", user);
         }
 
         protected override string OnGetTableName() => m_sTableName;

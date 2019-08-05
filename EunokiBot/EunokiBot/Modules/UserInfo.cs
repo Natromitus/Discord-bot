@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using System.IO;
 
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Discord.Rest;
 
 using EunokiBot.Model;
-using Discord.Rest;
-using System.IO;
+using EunokiBot.ImageManagment;
 
 namespace EunokiBot
 {
@@ -33,14 +34,25 @@ namespace EunokiBot
                     return;
 
                 int[] arIDs = new int[]
-                { inventory.ItemID1, inventory.ItemID2, inventory.ItemID3 };
-                int[] arAmounts = new int[]
-                { inventory.Amount1, inventory.Amount2, inventory.Amount3 };
+                {
+                    inventory.ItemID1, inventory.ItemID2, inventory.ItemID3,
+                    inventory.ItemID4, inventory.ItemID5, inventory.ItemID6,
+                    inventory.ItemID7, inventory.ItemID8, inventory.ItemID9
+                };
 
-                ImageManagment.InventoryImages.CreateInventoryImage(arIDs, arAmounts);
+                int[] arAmounts = new int[]
+                {
+                    inventory.Amount1, inventory.Amount2, inventory.Amount3,
+                    inventory.Amount4, inventory.Amount5, inventory.Amount6,
+                    inventory.Amount7, inventory.Amount8, inventory.Amount9
+                };
+
+                string sImageFileName = ImageManager.Singleton.CreateInventoryImage(arIDs, arAmounts);
+                if (sImageFileName == string.Empty)
+                    return;
 
                 RestUserMessage picture = await channel.SendFileAsync(
-                    Path.Combine(ImageManagment.InventoryImages.FilePath, "buffer.png"), string.Empty);
+                    Path.Combine(ImageManager.Singleton.FilePath, sImageFileName), string.Empty);
                 string imgurl = picture.Attachments.First().Url;
 
                 var embed = new EmbedBuilder
@@ -59,7 +71,8 @@ namespace EunokiBot
 
                 embed.WithImageUrl(imgurl);
 
-                File.Delete(@"D:\Eunoki\DiscordBotTextures\buffer.png");
+                File.Delete(Path.Combine(ImageManager.Singleton.FilePath, sImageFileName));
+
                 await Context.Channel.SendMessageAsync("", false, embed.Build());
                 await Task.Delay(500);
                 _ = picture.DeleteAsync();

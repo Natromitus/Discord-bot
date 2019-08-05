@@ -26,9 +26,7 @@ namespace EunokiBot
 
                 string sTemp = "";
                 foreach (Item item in items.Where(obj => obj != null))
-                {
                     sTemp += $"{item.ItemID}. {item.Name} for {item.Price} - {item.Description}\n";
-                }
 
                 _ = await Context.Channel.SendMessageAsync($"Shop:\n" + sTemp);
             }

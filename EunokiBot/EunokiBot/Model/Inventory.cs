@@ -9,16 +9,62 @@ namespace EunokiBot.Model
         #region Fields
         private const string m_sTableName = "Inventory";
         private const string m_sPrimaryKey = "UserID";
+
+        // Item on slot
         private int m_nItemID1;
         private int m_nItemID2;
         private int m_nItemID3;
+        private int m_nItemID4;
+        private int m_nItemID5;
+        private int m_nItemID6;
+        private int m_nItemID7;
+        private int m_nItemID8;
+        private int m_nItemID9;
+
+        // Amount of items on the slot
         private int m_nAmount1;
         private int m_nAmount2;
         private int m_nAmount3;
+        private int m_nAmount4;
+        private int m_nAmount5;
+        private int m_nAmount6;
+        private int m_nAmount7;
+        private int m_nAmount8;
+        private int m_nAmount9;
         #endregion
 
         #region Properties
         public long SQLUser_ID { get; set; }
+        public ulong UserID
+        {
+            get
+            {
+                return (ulong)SQLUser_ID;
+            }
+            set
+            {
+                SQLUser_ID = (long)value;
+            }
+        }
+
+        private IEnumerable<KeyValuePair<int, int>> ItemIDs
+        {
+            get
+            {
+                yield return new KeyValuePair<int, int>(ItemID1, Amount1);
+                yield return new KeyValuePair<int, int>(ItemID2, Amount2);
+                yield return new KeyValuePair<int, int>(ItemID3, Amount3);
+                yield return new KeyValuePair<int, int>(ItemID4, Amount4);
+                yield return new KeyValuePair<int, int>(ItemID5, Amount5);
+                yield return new KeyValuePair<int, int>(ItemID6, Amount6);
+                yield return new KeyValuePair<int, int>(ItemID7, Amount7);
+                yield return new KeyValuePair<int, int>(ItemID8, Amount8);
+                yield return new KeyValuePair<int, int>(ItemID9, Amount9);
+            }
+        }
+
+        #region Slots
+        #region Slot1
         public int ItemID1
         {
             get { return m_nItemID1; }
@@ -35,6 +81,8 @@ namespace EunokiBot.Model
                 SetField<int>(ref m_nAmount1, value);
             }
         }
+        #endregion
+        #region Slot2
         public int ItemID2
         {
             get { return m_nItemID2; }
@@ -51,7 +99,8 @@ namespace EunokiBot.Model
                 SetField<int>(ref m_nAmount2, value);
             }
         }
-
+        #endregion
+        #region Slot3
         public int ItemID3
         {
             get { return m_nItemID3; }
@@ -68,33 +117,125 @@ namespace EunokiBot.Model
                 SetField<int>(ref m_nAmount3, value);
             }
         }
-
-        public ulong UserID
+        #endregion
+        #region Slot4
+        public int ItemID4
         {
-            get
-            {
-                return (ulong)SQLUser_ID;
-            }
+            get { return m_nItemID4; }
             set
             {
-                SQLUser_ID = (long)value;
+                SetField<int>(ref m_nItemID4, value);
             }
         }
-        private IEnumerable<KeyValuePair<int, int>> ItemIDs
+        public int Amount4
         {
-            get
+            get { return m_nAmount4; }
+            set
             {
-                yield return new KeyValuePair<int, int>(ItemID1, Amount1);
-                yield return new KeyValuePair<int, int>(ItemID2, Amount2);
-                yield return new KeyValuePair<int, int>(ItemID3, Amount3);
+                SetField<int>(ref m_nAmount4, value);
             }
         }
+        #endregion
+        #region Slot5
+        public int ItemID5
+        {
+            get { return m_nItemID5; }
+            set
+            {
+                SetField<int>(ref m_nItemID5, value);
+            }
+        }
+        public int Amount5
+        {
+            get { return m_nAmount5; }
+            set
+            {
+                SetField<int>(ref m_nAmount5, value);
+            }
+        }
+        #endregion
+        #region Slot6
+        public int ItemID6
+        {
+            get { return m_nItemID6; }
+            set
+            {
+                SetField<int>(ref m_nItemID6, value);
+            }
+        }
+        public int Amount6
+        {
+            get { return m_nAmount6; }
+            set
+            {
+                SetField<int>(ref m_nAmount6, value);
+            }
+        }
+        #endregion
+        #region Slot7
+        public int ItemID7
+        {
+            get { return m_nItemID7; }
+            set
+            {
+                SetField<int>(ref m_nItemID7, value);
+            }
+        }
+        
+        public int Amount7
+        {
+            get { return m_nAmount7; }
+            set
+            {
+                SetField<int>(ref m_nAmount7, value);
+            }
+        }
+        #endregion
+        #region Slot8
+        public int ItemID8
+        {
+            get { return m_nItemID8; }
+            set
+            {
+                SetField<int>(ref m_nItemID8, value);
+            }
+        }
+        public int Amount8
+        {
+            get { return m_nAmount8; }
+            set
+            {
+                SetField<int>(ref m_nAmount8, value);
+            }
+        }
+        #endregion
+        #region Slot9
+        public int ItemID9
+        {
+            get { return m_nItemID9; }
+            set
+            {
+                SetField<int>(ref m_nItemID9, value);
+            }
+        }
+        public int Amount9
+        {
+            get { return m_nAmount9; }
+            set
+            {
+                SetField<int>(ref m_nAmount9, value);
+            }
+        }
+        #endregion
+        #endregion
         #endregion
 
         public Inventory(ulong id)
         {
             UserID = id;
-            ItemID1 = ItemID2 = ItemID3 = Amount1 = Amount2 = Amount3 = 0;
+            ItemID1 = ItemID2 = ItemID3 = Amount1 = Amount2 = Amount3 =
+            ItemID4 = ItemID5 = ItemID6 = Amount4 = Amount5 = Amount6 =
+            ItemID7 = ItemID8 = ItemID9 = Amount7 = Amount8 = Amount9 = 0;
         }
 
         protected Inventory()
@@ -111,6 +252,18 @@ namespace EunokiBot.Model
                     return m_nAmount2;
                 case 2:
                     return m_nAmount3;
+                case 3:
+                    return m_nAmount4;
+                case 4:
+                    return m_nAmount5;
+                case 5:
+                    return m_nAmount6;
+                case 6:
+                    return m_nAmount7;
+                case 7:
+                    return m_nAmount8;
+                case 8:
+                    return m_nAmount9;
                 default:
                     return 0;
             }
@@ -126,6 +279,18 @@ namespace EunokiBot.Model
                     return m_nItemID2;
                 case 2:
                     return m_nItemID3;
+                case 3:
+                    return m_nItemID4;
+                case 4:
+                    return m_nItemID5;
+                case 5:
+                    return m_nItemID6;
+                case 6:
+                    return m_nItemID7;
+                case 7:
+                    return m_nItemID8;
+                case 8:
+                    return m_nItemID9;
                 default:
                     return 0;
             }
@@ -133,8 +298,15 @@ namespace EunokiBot.Model
 
         public static void NewRecord(Inventory inventory)
         {
-            SQL.Singleton.Connection.Execute("INSERT INTO Inventory (UserID, ItemID1, Amount1, ItemID2, Amount2, ItemID3, Amount3)" +
-                " VALUES (@UserID ,@ItemID1, @Amount1, @ItemID2, @Amount2, @ItemID3, @Amount3)", inventory);
+            SQL.Singleton.Connection.Execute($"INSERT INTO {m_sTableName}" +
+                $"({m_sPrimaryKey}," +
+                " ItemID1, Amount1, ItemID2, Amount2, ItemID3, Amount3," +
+                " ItemID4, Amount4, ItemID5, Amount5, ItemID6, Amount6," +
+                " ItemID7, Amount7, ItemID8, Amount8, ItemID9, Amount9)" +
+                $" VALUES (@{m_sPrimaryKey}," +
+                " @ItemID1, @Amount1, @ItemID2, @Amount2, @ItemID3, @Amount3," +
+                " @ItemID4, @Amount4, @ItemID5, @Amount5, @ItemID6, @Amount6," +
+                " @ItemID7, @Amount7, @ItemID8, @Amount8, @ItemID9, @Amount9)", inventory);
         }
 
         public int AddItem(int nID, int nAmount)
@@ -165,6 +337,7 @@ namespace EunokiBot.Model
 
             return 0;
         }
+
         public void SetItemAt(int nIndex, int nID, int nAmount)
         {
             switch(nIndex)
@@ -181,6 +354,32 @@ namespace EunokiBot.Model
                     ItemID3 = nID;
                     Amount3 = nAmount;
                     break;
+                case 3:
+                    ItemID4 = nID;
+                    Amount4 = nAmount;
+                    break;
+                case 4:
+                    ItemID5 = nID;
+                    Amount5 = nAmount;
+                    break;
+                case 5:
+                    ItemID6 = nID;
+                    Amount6 = nAmount;
+                    break;
+                case 6:
+                    ItemID7 = nID;
+                    Amount7 = nAmount;
+                    break;
+                case 7:
+                    ItemID8 = nID;
+                    Amount8 = nAmount;
+                    break;
+                case 8:
+                    ItemID9 = nID;
+                    Amount9 = nAmount;
+                    break;
+                default:
+                    return;
             }
         }
 
@@ -191,49 +390,10 @@ namespace EunokiBot.Model
                 return SQL.Singleton.GetValue<Inventory>(m_sTableName, "*", m_sPrimaryKey, (long)ulUserID);
         }
 
-        public static Item GetItemAtUserIndex(ulong ulUserID, int nIndex)
-        {
-            if (nIndex < 0 || nIndex > 2)
-                return null;
-
-            return SQL.Singleton.GetValue<Item>(m_sTableName, $"ItemID{nIndex}", m_sPrimaryKey, (long)ulUserID);
-        }
-
-        public void SetItemAtIndex(ulong ulUserID, int nIndex, int nItemID, int nAmount)
-        {
-            if (nIndex < 0 || nIndex > 2)
-                return;
-
-            Item item = Item.GetItemByID(nItemID);
-            if (item == null)
-                return;
-
-            if (item.MaxStack < nAmount)
-                return;
-
-            Inventory inventory = Get(ulUserID);
-            if (inventory == null)
-                return;
-
-            switch (nIndex)
-            {
-                case 1:
-                    inventory.ItemID1 = nItemID;
-                    inventory.Amount1 = nAmount;
-                    break;
-                case 2:
-                    inventory.ItemID2 = nItemID;
-                    inventory.Amount2 = nAmount;
-                    break;
-                case 3:
-                    inventory.ItemID3 = nItemID;
-                    inventory.Amount3 = nAmount;
-                    break;
-            }
-        }
-
         protected override string OnGetTableName() => m_sTableName;
+
         protected override string OnGetPrimaryKeyName() => m_sPrimaryKey;
+
         protected override object OnGetPrimaryKeyValue() => SQLUser_ID;
     }
 }

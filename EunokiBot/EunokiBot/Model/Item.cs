@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace EunokiBot.Model
+﻿namespace EunokiBot.Model
 {
     public class Item : Root
     {
@@ -13,14 +9,11 @@ namespace EunokiBot.Model
 
         #region Properties
         public int ItemID { get; private set; }
+        public int Tier { get; private set; }
         public string Name { get; private set; }
-        public string Image { get; private set; }
         public string Description { get; private set; }
-        public int Chance { get; private set; }
         public int Price { get; private set; }
         public int MaxStack { get; private set; }
-        public int Consumable { get; private set; }
-        public int Buff { get; private set; }
         #endregion
 
         protected Item()
@@ -33,7 +26,9 @@ namespace EunokiBot.Model
         }
 
         protected override string OnGetTableName() => m_sTableName;
+
         protected override string OnGetPrimaryKeyName() => m_sPrimaryKey;
+
         protected override object OnGetPrimaryKeyValue() => ItemID;
     }
 }
