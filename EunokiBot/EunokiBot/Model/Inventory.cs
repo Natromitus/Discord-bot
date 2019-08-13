@@ -7,8 +7,8 @@ namespace EunokiBot.Model
     public class Inventory : Root
     {
         #region Fields
-        private const string m_sTableName = "Inventory";
-        private const string m_sPrimaryKey = "UserID";
+        public const string TABLE_NAME = "Inventory";
+        public const string PRIMARY_KEY = "UserID";
 
         // Item on slot
         private int m_nItemID1;
@@ -298,12 +298,12 @@ namespace EunokiBot.Model
 
         public static void NewRecord(Inventory inventory)
         {
-            SQL.Singleton.Connection.Execute($"INSERT INTO {m_sTableName}" +
-                $"({m_sPrimaryKey}," +
+            SQL.Singleton.Connection.Execute($"INSERT INTO {TABLE_NAME}" +
+                $"({PRIMARY_KEY}," +
                 " ItemID1, Amount1, ItemID2, Amount2, ItemID3, Amount3," +
                 " ItemID4, Amount4, ItemID5, Amount5, ItemID6, Amount6," +
                 " ItemID7, Amount7, ItemID8, Amount8, ItemID9, Amount9)" +
-                $" VALUES (@{m_sPrimaryKey}," +
+                $" VALUES (@{PRIMARY_KEY}," +
                 " @ItemID1, @Amount1, @ItemID2, @Amount2, @ItemID3, @Amount3," +
                 " @ItemID4, @Amount4, @ItemID5, @Amount5, @ItemID6, @Amount6," +
                 " @ItemID7, @Amount7, @ItemID8, @Amount8, @ItemID9, @Amount9)", inventory);
@@ -387,12 +387,12 @@ namespace EunokiBot.Model
         {
             using (WriteSuspender wSus = new WriteSuspender())
             using (ReadSuspender rSus = new ReadSuspender())
-                return SQL.Singleton.GetValue<Inventory>(m_sTableName, "*", m_sPrimaryKey, (long)ulUserID);
+                return SQL.Singleton.GetValue<Inventory>(TABLE_NAME, "*", PRIMARY_KEY, (long)ulUserID);
         }
 
-        protected override string OnGetTableName() => m_sTableName;
+        protected override string OnGetTableName() => TABLE_NAME;
 
-        protected override string OnGetPrimaryKeyName() => m_sPrimaryKey;
+        protected override string OnGetPrimaryKeyName() => PRIMARY_KEY;
 
         protected override object OnGetPrimaryKeyValue() => SQLUser_ID;
     }

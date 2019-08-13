@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Drawing;
 using System.IO;
+using System.Net;
 
 using Discord;
 using Discord.Commands;
@@ -33,49 +35,38 @@ namespace EunokiBot
                 if (channel == null)
                     return;
 
-                int[] arIDs = new int[]
-                {
-                    inventory.ItemID1, inventory.ItemID2, inventory.ItemID3,
-                    inventory.ItemID4, inventory.ItemID5, inventory.ItemID6,
-                    inventory.ItemID7, inventory.ItemID8, inventory.ItemID9
-                };
-
-                int[] arAmounts = new int[]
-                {
-                    inventory.Amount1, inventory.Amount2, inventory.Amount3,
-                    inventory.Amount4, inventory.Amount5, inventory.Amount6,
-                    inventory.Amount7, inventory.Amount8, inventory.Amount9
-                };
-
-                string sImageFileName = ImageManager.Singleton.CreateInventoryImage(arIDs, arAmounts);
+                
+                
+                string sImageFileName = ImageManager.Singleton.UserInfo(Context.User, user, inventory);
                 if (sImageFileName == string.Empty)
                     return;
 
+                
                 RestUserMessage picture = await channel.SendFileAsync(
                     Path.Combine(ImageManager.Singleton.FilePath, sImageFileName), string.Empty);
                 string imgurl = picture.Attachments.First().Url;
 
                 var embed = new EmbedBuilder
                 {
-                    Author = new EmbedAuthorBuilder
+                    /*Author = new EmbedAuthorBuilder
                     {
                         Name = "General info",
                         IconUrl = Context.Guild.IconUrl,
                     },
                     ThumbnailUrl = Context.User.GetAvatarUrl(),
                     Title = Context.User.Username,
-                    Description = $"Level {user.Level}        XP: {user.XP}/{SQL.Singleton.GetLevelGapByIndex(user.Level + 1)}\n" +
+                    Description = $"Level {user.Level}        XP: {user.XP}/{Data.Singleton.Levels[user.Level + 1].XPGap}\n" +
                     $"Money: {user.Money}",
-                    Color = Color.Blue
+                    Color = Color.Blue*/
                 };
 
                 embed.WithImageUrl(imgurl);
 
-                File.Delete(Path.Combine(ImageManager.Singleton.FilePath, sImageFileName));
+                //File.Delete(Path.Combine(ImageManager.Singleton.FilePath, sImageFileName));
 
                 await Context.Channel.SendMessageAsync("", false, embed.Build());
                 await Task.Delay(500);
-                _ = picture.DeleteAsync();
+                //_ = picture.DeleteAsync();
             }
         }
     }

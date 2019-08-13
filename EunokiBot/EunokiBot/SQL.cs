@@ -44,29 +44,12 @@ namespace EunokiBot
         {
             return Connection.Query<int>($"SELECT COUNT(*) FROM {sTable}").FirstOrDefault();
         }
-
-        public int GetLevelGapByIndex(int nIndex)
-        {
-            if (nIndex < 0 && nIndex > GetCount("Levels"))
-                return 9999999;
-
-            return GetValue<int>("Levels", "XPGap", "Level", nIndex);
-        }
         #endregion
 
         #region Set
         public void UpdateValue(string sTable, string sVar, object value, string sKeyName, object keyVal)
         {
             Connection.Execute($"UPDATE {sTable} SET {sVar} = {value} WHERE {sKeyName} = {keyVal}");
-        }
-
-        public void IncrementUserMessage(ulong ulUserID)
-        {
-            User user = User.Get(ulUserID);
-            if (user == null)
-                return;
-
-            user.Messages++;
         }
         #endregion
     }

@@ -7,6 +7,8 @@ using System.Reflection;
 using Discord.WebSocket;
 using Discord.Commands;
 
+using EunokiBot.Model;
+
 namespace EunokiBot
 {
     class CommandHandler
@@ -29,7 +31,10 @@ namespace EunokiBot
                 return;
 
             SocketCommandContext context = new SocketCommandContext(_client, sMessage);
-            SQL.Singleton.IncrementUserMessage(context.User.Id);
+
+            User user = User.Get(context.User.Id);
+            if (user != null)
+                user.Messages++;
 
             int nArsPos = 0;
 

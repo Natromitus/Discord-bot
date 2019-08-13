@@ -7,8 +7,8 @@ namespace EunokiBot.Model
     public class Level : Root
     {
         #region Fields
-        private const string m_sTableName = "Levels";
-        private const string m_sPrimaryKey = "Level";
+        public const string TABLE_NAME = "Levels";
+        public const string PRIMARY_KEY = "Level";
         #endregion
 
         #region Properties
@@ -28,12 +28,12 @@ namespace EunokiBot.Model
 
         public static Level GetLevel(int nLevelIndex)
         {
-            return SQL.Singleton.GetValue<Level>(m_sTableName, "*", m_sPrimaryKey, nLevelIndex);
+            return SQL.Singleton.GetValue<Level>(TABLE_NAME, "*", PRIMARY_KEY, nLevelIndex);
         }
 
-        protected override string OnGetTableName() => m_sTableName;
+        protected override string OnGetTableName() => TABLE_NAME;
 
-        protected override string OnGetPrimaryKeyName() => m_sPrimaryKey;
+        protected override string OnGetPrimaryKeyName() => PRIMARY_KEY;
 
         protected override object OnGetPrimaryKeyValue() => LevelIndex;
     }

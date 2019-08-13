@@ -3,8 +3,8 @@
     public class Item : Root
     {
         #region Fields
-        private const string m_sTableName = "Items";
-        private const string m_sPrimaryKey = "ItemID";
+        public const string TABLE_NAME = "Items";
+        public const string PRIMARY_KEY = "ItemID";
         #endregion
 
         #region Properties
@@ -22,12 +22,12 @@
 
         public static Item GetItemByID(int nID)
         {
-            return SQL.Singleton.GetValue<Item>(m_sTableName, "*", m_sPrimaryKey, nID);
+            return SQL.Singleton.GetValue<Item>(TABLE_NAME, "*", PRIMARY_KEY, nID);
         }
 
-        protected override string OnGetTableName() => m_sTableName;
+        protected override string OnGetTableName() => TABLE_NAME;
 
-        protected override string OnGetPrimaryKeyName() => m_sPrimaryKey;
+        protected override string OnGetPrimaryKeyName() => PRIMARY_KEY;
 
         protected override object OnGetPrimaryKeyValue() => ItemID;
     }

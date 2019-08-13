@@ -6,8 +6,8 @@ namespace EunokiBot.Model
     public class User : Root
     {
         #region Fields
-        private const string m_sTableName = "Users";
-        private const string m_sPrimaryKey = "UserID";
+        public const string TABLE_NAME = "Users";
+        public const string PRIMARY_KEY = "UserID";
         private int m_nWarnings;
         private int m_nMessages;
         private int m_nLevel;
@@ -25,7 +25,7 @@ namespace EunokiBot.Model
             get { return m_nWarnings; }
             set
             {
-                if (!SetField<int>(ref m_nMessages, value))
+                if (!SetField<int>(ref m_nWarnings, value))
                     return;
 
                 if (value >= 3)
@@ -65,7 +65,7 @@ namespace EunokiBot.Model
                 if (!SetField<int>(ref m_nXP, value))
                     return;
 
-                if (m_nXP >= SQL.Singleton.GetLevelGapByIndex(Level + 1))
+                if (m_nXP >= Data.Singleton.Levels[Level + 1].XPGap)
                     ++Level;
             }
         }
@@ -136,19 +136,19 @@ namespace EunokiBot.Model
             using (ReadSuspender rSus = new ReadSuspender())
             {
                 return SQL.Singleton.Connection.Query<User>(
-                    $"SELECT * FROM Users WHERE {m_sPrimaryKey} = {(long)ulUserID}").FirstOrDefault();
+                    $"SELECT * FROM Users WHERE {PRIMARY_KEY} = {(long)ulUserID}").FirstOrDefault();
             }
         }
 
         public static void NewRecord(User user)
         {
-            SQL.Singleton.Connection.Execute($"INSERT INTO {m_sTableName}" +
-                $"({m_sPrimaryKey}, Warnings, Messages, Level, XP, Money, Quests, Wins, Lost)" +
-                $" VALUES (@{m_sPrimaryKey}, @Warnings, @Messages, @Level, @XP, @Money, @Quests, @Wins, @Lost)", user);
+            SQL.Singleton.Connection.Execute($"INSERT INTO {TABLE_NAME}" +
+                $"({PRIMARY_KEY}, Warnings, Messages, Level, XP, Money, Quests, Wins, Lost)" +
+                $" VALUES (@{PRIMARY_KEY}, @Warnings, @Messages, @Level, @XP, @Money, @Quests, @Wins, @Lost)", user);
         }
 
-        protected override string OnGetTableName() => m_sTableName;
-        protected override string OnGetPrimaryKeyName() => m_sPrimaryKey;
+        protected override string OnGetTableName() => TABLE_NAME;
+        protected override string OnGetPrimaryKeyName() => PRIMARY_KEY;
         protected override object OnGetPrimaryKeyValue() => SQLUser_ID;
     }
 }
