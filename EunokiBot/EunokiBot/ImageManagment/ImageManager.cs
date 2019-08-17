@@ -264,7 +264,7 @@ namespace EunokiBot.ImageManagment
             return user.UserID + ".png";
         }
 
-        // Inventory
+        #region Inventory
         public Bitmap CreateInventoryImage(int[] nIDs, int[] nAmounts)
         {
             List<Bitmap> arItems = new List<Bitmap>();
@@ -335,5 +335,6 @@ namespace EunokiBot.ImageManagment
                 images.ForEach(obj => obj.Dispose());
             }
         }
+        #endregion
     }
 }

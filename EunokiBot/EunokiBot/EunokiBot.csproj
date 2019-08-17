@@ -6,12 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Database\DemoDb.db">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Dapper" Version="1.60.6" />
     <PackageReference Include="Discord.Net" Version="2.1.1" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.111" />
@@ -19,6 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Database\Main.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\Amount\01.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

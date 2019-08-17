@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace EunokiBot
+namespace EunokiBot.Model
 {
     public abstract class Root
     {
