@@ -19,7 +19,6 @@ namespace EunokiBot.Model
         private int m_nItemID6;
         private int m_nItemID7;
         private int m_nItemID8;
-        private int m_nItemID9;
 
         // Amount of items on the slot
         private int m_nAmount1;
@@ -30,7 +29,6 @@ namespace EunokiBot.Model
         private int m_nAmount6;
         private int m_nAmount7;
         private int m_nAmount8;
-        private int m_nAmount9;
         #endregion
 
         #region Properties
@@ -59,7 +57,6 @@ namespace EunokiBot.Model
                 yield return new KeyValuePair<int, int>(ItemID6, Amount6);
                 yield return new KeyValuePair<int, int>(ItemID7, Amount7);
                 yield return new KeyValuePair<int, int>(ItemID8, Amount8);
-                yield return new KeyValuePair<int, int>(ItemID9, Amount9);
             }
         }
 
@@ -209,24 +206,6 @@ namespace EunokiBot.Model
             }
         }
         #endregion
-        #region Slot9
-        public int ItemID9
-        {
-            get { return m_nItemID9; }
-            set
-            {
-                SetField<int>(ref m_nItemID9, value);
-            }
-        }
-        public int Amount9
-        {
-            get { return m_nAmount9; }
-            set
-            {
-                SetField<int>(ref m_nAmount9, value);
-            }
-        }
-        #endregion
         #endregion
         #endregion
 
@@ -235,7 +214,7 @@ namespace EunokiBot.Model
             UserID = id;
             ItemID1 = ItemID2 = ItemID3 = Amount1 = Amount2 = Amount3 =
             ItemID4 = ItemID5 = ItemID6 = Amount4 = Amount5 = Amount6 =
-            ItemID7 = ItemID8 = ItemID9 = Amount7 = Amount8 = Amount9 = 0;
+            ItemID7 = ItemID8 = Amount7 = Amount8 = 0;
         }
 
         protected Inventory()
@@ -262,8 +241,6 @@ namespace EunokiBot.Model
                     return m_nAmount7;
                 case 7:
                     return m_nAmount8;
-                case 8:
-                    return m_nAmount9;
                 default:
                     return 0;
             }
@@ -289,8 +266,6 @@ namespace EunokiBot.Model
                     return m_nItemID7;
                 case 7:
                     return m_nItemID8;
-                case 8:
-                    return m_nItemID9;
                 default:
                     return 0;
             }
@@ -302,11 +277,11 @@ namespace EunokiBot.Model
                 $"({PRIMARY_KEY}," +
                 " ItemID1, Amount1, ItemID2, Amount2, ItemID3, Amount3," +
                 " ItemID4, Amount4, ItemID5, Amount5, ItemID6, Amount6," +
-                " ItemID7, Amount7, ItemID8, Amount8, ItemID9, Amount9)" +
+                " ItemID7, Amount7, ItemID8, Amount8)" +
                 $" VALUES (@{PRIMARY_KEY}," +
                 " @ItemID1, @Amount1, @ItemID2, @Amount2, @ItemID3, @Amount3," +
                 " @ItemID4, @Amount4, @ItemID5, @Amount5, @ItemID6, @Amount6," +
-                " @ItemID7, @Amount7, @ItemID8, @Amount8, @ItemID9, @Amount9)", inventory);
+                " @ItemID7, @Amount7, @ItemID8, @Amount8)", inventory);
         }
 
         public int AddItem(int nID, int nAmount)
@@ -373,10 +348,6 @@ namespace EunokiBot.Model
                 case 7:
                     ItemID8 = nID;
                     Amount8 = nAmount;
-                    break;
-                case 8:
-                    ItemID9 = nID;
-                    Amount9 = nAmount;
                     break;
                 default:
                     return;
