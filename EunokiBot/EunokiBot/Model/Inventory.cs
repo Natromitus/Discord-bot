@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+
 using Dapper;
+
+using EunokiBot.Items;
 
 namespace EunokiBot.Model
 {
@@ -9,6 +12,8 @@ namespace EunokiBot.Model
         #region Fields
         public const string TABLE_NAME = "Inventory";
         public const string PRIMARY_KEY = "UserID";
+
+        private BaseItem[] m_arInventoryItems = new BaseItem[8];
 
         // Item on slot
         private int m_nItemID1;
@@ -42,6 +47,20 @@ namespace EunokiBot.Model
             set
             {
                 SQLUser_ID = (long)value;
+            }
+        }
+
+        public BaseItem[] InventoryItems
+        {
+            get
+            {
+                if(m_arInventoryItems.Count() == 0)
+                {
+                    for (int i = 0; i < m_arInventoryItems.Count(); ++i)
+                        m_arInventoryItems[i] = GetItemClass(GetID(i));
+                }
+
+                return m_arInventoryItems;
             }
         }
 
@@ -359,6 +378,83 @@ namespace EunokiBot.Model
             using (WriteSuspender wSus = new WriteSuspender())
             using (ReadSuspender rSus = new ReadSuspender())
                 return SQL.Singleton.GetValue<Inventory>(TABLE_NAME, "*", PRIMARY_KEY, (long)ulUserID);
+        }
+
+        private BaseItem GetItemClass(int nID)
+        {
+            switch (nID)
+            {
+                case 0:
+                    return null;
+                case 1:
+                    return new SmallXPCapsule();
+                case 2:
+                    return new ChewingGum();
+                case 3:
+                    return new Cake();
+                case 4:
+                    return new UselessFlex();
+                case 5:
+                    return new CringeTicket();
+                case 6:
+                    return new PunTicket();
+                case 7:
+                    return new FactTicket();
+                case 8:
+                    return new PaperPlane();
+                case 9:
+                    return new CreateHunger();
+                case 10:
+                    return new Challenge();
+                case 11:
+                    return new MediumXPCapsule();
+                case 12:
+                    return new RicardoTime();
+                case 13:
+                    return new RainyCloud();
+                case 14:
+                    return new DuelBlock();
+                case 15:
+                    return new RerollQuest();
+                case 16:
+                    return new BigXPCapsule();
+                case 17:
+                    return new MysteryBox();
+                case 18:
+                    return new RandomMusic();
+                case 19:
+                    return new SuperduperSkip();
+                case 20:
+                    return new Overdose();
+                case 21:
+                    return new Minigun();
+                case 22:
+                    return new RaidShop();
+                case 23:
+                    return new FartSound();
+                case 24:
+                    return new BadNeighbour();
+                case 25:
+                    return new SneakyRickroll();
+                case 26:
+                    return new LambSauce();
+                case 27:
+                    return new NoisyEater();
+                case 28:
+                    return new MessengerSound();
+                case 29:
+                    return new DiscordSound();
+                case 30:
+                    return new SlapMod();
+                case 31:
+                    return new TalkToSpeech();
+                case 32:
+                    return new PapaCaravana();
+                case 33:
+                    return new SuggestTopic();
+                default:
+                    return null;
+            }
         }
 
         protected override string OnGetTableName() => TABLE_NAME;
