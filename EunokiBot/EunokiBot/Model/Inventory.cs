@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Linq;
 
 using Dapper;
@@ -13,7 +17,7 @@ namespace EunokiBot.Model
         public const string TABLE_NAME = "Inventory";
         public const string PRIMARY_KEY = "UserID";
 
-        private BaseItem[] m_arInventoryItems = new BaseItem[8];
+        private BaseItem[] m_arInventoryItems = null;
 
         // Item on slot
         private int m_nItemID1;
@@ -54,8 +58,9 @@ namespace EunokiBot.Model
         {
             get
             {
-                if(m_arInventoryItems.Count() == 0)
+                if(m_arInventoryItems == null)
                 {
+                    m_arInventoryItems = new BaseItem[8];
                     for (int i = 0; i < m_arInventoryItems.Count(); ++i)
                         m_arInventoryItems[i] = GetItemClass(GetID(i));
                 }
@@ -86,7 +91,7 @@ namespace EunokiBot.Model
             get { return m_nItemID1; }
             set
             {
-                SetField<int>(ref m_nItemID1, value);
+                SetField(ref m_nItemID1, value);
             }
         }
         public int Amount1
@@ -94,7 +99,7 @@ namespace EunokiBot.Model
             get { return m_nAmount1; }
             set
             {
-                SetField<int>(ref m_nAmount1, value);
+                SetField(ref m_nAmount1, value);
             }
         }
         #endregion
@@ -104,7 +109,7 @@ namespace EunokiBot.Model
             get { return m_nItemID2; }
             set
             {
-                SetField<int>(ref m_nItemID2, value);
+                SetField(ref m_nItemID2, value);
             }
         }
         public int Amount2
@@ -112,7 +117,7 @@ namespace EunokiBot.Model
             get { return m_nAmount2; }
             set
             {
-                SetField<int>(ref m_nAmount2, value);
+                SetField(ref m_nAmount2, value);
             }
         }
         #endregion
@@ -122,7 +127,7 @@ namespace EunokiBot.Model
             get { return m_nItemID3; }
             set
             {
-                SetField<int>(ref m_nItemID3, value);
+                SetField(ref m_nItemID3, value);
             }
         }
         public int Amount3
@@ -130,7 +135,7 @@ namespace EunokiBot.Model
             get { return m_nAmount3; }
             set
             {
-                SetField<int>(ref m_nAmount3, value);
+                SetField(ref m_nAmount3, value);
             }
         }
         #endregion
@@ -140,7 +145,7 @@ namespace EunokiBot.Model
             get { return m_nItemID4; }
             set
             {
-                SetField<int>(ref m_nItemID4, value);
+                SetField(ref m_nItemID4, value);
             }
         }
         public int Amount4
@@ -148,7 +153,7 @@ namespace EunokiBot.Model
             get { return m_nAmount4; }
             set
             {
-                SetField<int>(ref m_nAmount4, value);
+                SetField(ref m_nAmount4, value);
             }
         }
         #endregion
@@ -158,7 +163,7 @@ namespace EunokiBot.Model
             get { return m_nItemID5; }
             set
             {
-                SetField<int>(ref m_nItemID5, value);
+                SetField(ref m_nItemID5, value);
             }
         }
         public int Amount5
@@ -166,7 +171,7 @@ namespace EunokiBot.Model
             get { return m_nAmount5; }
             set
             {
-                SetField<int>(ref m_nAmount5, value);
+                SetField(ref m_nAmount5, value);
             }
         }
         #endregion
@@ -176,7 +181,7 @@ namespace EunokiBot.Model
             get { return m_nItemID6; }
             set
             {
-                SetField<int>(ref m_nItemID6, value);
+                SetField(ref m_nItemID6, value);
             }
         }
         public int Amount6
@@ -184,7 +189,7 @@ namespace EunokiBot.Model
             get { return m_nAmount6; }
             set
             {
-                SetField<int>(ref m_nAmount6, value);
+                SetField(ref m_nAmount6, value);
             }
         }
         #endregion
@@ -194,7 +199,7 @@ namespace EunokiBot.Model
             get { return m_nItemID7; }
             set
             {
-                SetField<int>(ref m_nItemID7, value);
+                SetField(ref m_nItemID7, value);
             }
         }
         
@@ -203,7 +208,7 @@ namespace EunokiBot.Model
             get { return m_nAmount7; }
             set
             {
-                SetField<int>(ref m_nAmount7, value);
+                SetField(ref m_nAmount7, value);
             }
         }
         #endregion
@@ -213,7 +218,7 @@ namespace EunokiBot.Model
             get { return m_nItemID8; }
             set
             {
-                SetField<int>(ref m_nItemID8, value);
+                SetField(ref m_nItemID8, value);
             }
         }
         public int Amount8
@@ -221,7 +226,7 @@ namespace EunokiBot.Model
             get { return m_nAmount8; }
             set
             {
-                SetField<int>(ref m_nAmount8, value);
+                SetField(ref m_nAmount8, value);
             }
         }
         #endregion
@@ -332,6 +337,24 @@ namespace EunokiBot.Model
             return 0;
         }
 
+        public void RemoveItem(int nID)
+        {
+            // Get index of slot with least amount of desired item
+
+            // Need to find index of slot that has same ID but has the least amount of it.
+            /*
+            int pos = ItemIDs.ToList().FindAll(obj => obj.Key == nID).Select(
+                obj => obj.Value).ToList().FindIndex(obj => obj.Aggregate(
+                (minItem, nextItem) => minItem < nextItem ? minItem : nextItem));
+
+            int nAmount = GetAmount(pos) - 1;
+            if (nAmount == 0)
+                nID = 0;
+
+            SetItemAt(pos, nID, nAmount);*/
+
+        }
+
         public void SetItemAt(int nIndex, int nID, int nAmount)
         {
             switch(nIndex)
@@ -382,79 +405,17 @@ namespace EunokiBot.Model
 
         private BaseItem GetItemClass(int nID)
         {
-            switch (nID)
+            foreach(TypeInfo iter in Data.Singleton.ItemTypes)
             {
-                case 0:
-                    return null;
-                case 1:
-                    return new SmallXPCapsule();
-                case 2:
-                    return new ChewingGum();
-                case 3:
-                    return new Cake();
-                case 4:
-                    return new UselessFlex();
-                case 5:
-                    return new CringeTicket();
-                case 6:
-                    return new PunTicket();
-                case 7:
-                    return new FactTicket();
-                case 8:
-                    return new PaperPlane();
-                case 9:
-                    return new CreateHunger();
-                case 10:
-                    return new Challenge();
-                case 11:
-                    return new MediumXPCapsule();
-                case 12:
-                    return new RicardoTime();
-                case 13:
-                    return new RainyCloud();
-                case 14:
-                    return new DuelBlock();
-                case 15:
-                    return new RerollQuest();
-                case 16:
-                    return new BigXPCapsule();
-                case 17:
-                    return new MysteryBox();
-                case 18:
-                    return new RandomMusic();
-                case 19:
-                    return new SuperduperSkip();
-                case 20:
-                    return new Overdose();
-                case 21:
-                    return new Minigun();
-                case 22:
-                    return new RaidShop();
-                case 23:
-                    return new FartSound();
-                case 24:
-                    return new BadNeighbour();
-                case 25:
-                    return new SneakyRickroll();
-                case 26:
-                    return new LambSauce();
-                case 27:
-                    return new NoisyEater();
-                case 28:
-                    return new MessengerSound();
-                case 29:
-                    return new DiscordSound();
-                case 30:
-                    return new SlapMod();
-                case 31:
-                    return new TalkToSpeech();
-                case 32:
-                    return new PapaCaravana();
-                case 33:
-                    return new SuggestTopic();
-                default:
-                    return null;
+                ItemIDAttribute attr = iter.GetCustomAttribute<ItemIDAttribute>();
+                if (attr == null)
+                    continue;
+
+                if (attr.ID == nID)
+                    return (BaseItem)Activator.CreateInstance(iter);
             }
+
+            return null;
         }
 
         protected override string OnGetTableName() => TABLE_NAME;

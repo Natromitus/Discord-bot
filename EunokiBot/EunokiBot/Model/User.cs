@@ -25,7 +25,7 @@ namespace EunokiBot.Model
             get { return m_nWarnings; }
             set
             {
-                if (!SetField<int>(ref m_nWarnings, value))
+                if (!SetField(ref m_nWarnings, value))
                     return;
 
                 if (value >= 3)
@@ -38,7 +38,7 @@ namespace EunokiBot.Model
             get { return m_nMessages; }
             set
             {
-                if (!SetField<int>(ref m_nMessages, value))
+                if (!SetField(ref m_nMessages, value))
                     return;
 
                 XP += SQL.Singleton.GetValue<int>("Levels", "XPPerMessage", "Level", Level);
@@ -50,7 +50,7 @@ namespace EunokiBot.Model
             get { return m_nLevel; }
             set
             {
-                if (!SetField<int>(ref m_nLevel, value))
+                if (!SetField(ref m_nLevel, value))
                     return;
 
                 _ = Program.Singleton.AlertsHandler.OnLevelUp(UserID, value);
@@ -62,7 +62,7 @@ namespace EunokiBot.Model
             get { return m_nXP; }
             set
             {
-                if (!SetField<int>(ref m_nXP, value))
+                if (!SetField(ref m_nXP, value))
                     return;
 
                 if (m_nXP >= Data.Singleton.Levels[Level + 1].XPGap)
@@ -75,7 +75,7 @@ namespace EunokiBot.Model
             get { return m_nMoney; }
             set
             {
-                SetField<int>(ref m_nMoney, value);
+                SetField(ref m_nMoney, value);
             }
         }
 
@@ -84,7 +84,7 @@ namespace EunokiBot.Model
             get { return m_nQuests; }
             set
             {
-                SetField<int>(ref m_nQuests, value);
+                SetField(ref m_nQuests, value);
             }
         }
 
@@ -93,7 +93,7 @@ namespace EunokiBot.Model
             get { return m_nWins; }
             set
             {
-                SetField<int>(ref m_nWins, value);
+                SetField(ref m_nWins, value);
             }
         }
 
@@ -102,7 +102,7 @@ namespace EunokiBot.Model
             get { return m_nLost; }
             set
             {
-                SetField<int>(ref m_nLost, value);
+                SetField(ref m_nLost, value);
             }
         }
         

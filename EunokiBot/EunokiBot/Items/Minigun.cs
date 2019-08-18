@@ -8,10 +8,11 @@ using EunokiBot.Model;
 
 namespace EunokiBot.Items
 {
+    [ItemID(21)]
     public class Minigun : BaseItem
     {
         public override void OnItemUse(
-            SocketCommandContext context, User user, Inventory inventory, IUser targetUser = null, string sText = null)
+            SocketCommandContext context, User user, Inventory inventory, object param = null)
         {
 
         }

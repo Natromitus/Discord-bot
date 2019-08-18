@@ -1,5 +1,8 @@
-﻿using System;
+﻿using EunokiBot.Items;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace EunokiBot.Model
@@ -9,6 +12,7 @@ namespace EunokiBot.Model
         #region Fields
         private static readonly Data m_singleton = new Data();
 
+        private List<TypeInfo> m_arItemTypes = null;
         private List<Level> m_arLevels = new List<Level>();
         private List<Item> m_arItems = new List<Item>();
         //private List<Action> m_arActions = new List<Action>();
@@ -45,6 +49,21 @@ namespace EunokiBot.Model
                 }
 
                 return m_arItems;
+            }
+        }
+
+        public IEnumerable<TypeInfo> ItemTypes
+        {
+            get
+            {
+                if (m_arItemTypes == null)
+                {
+                    Assembly assy = Assembly.GetEntryAssembly();
+                    m_arItemTypes = assy.DefinedTypes.Where(
+                        obj => typeof(BaseItem).IsAssignableFrom(obj)).ToList();
+                }
+
+                return m_arItemTypes;
             }
         }
         #endregion
