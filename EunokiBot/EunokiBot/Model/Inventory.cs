@@ -339,20 +339,27 @@ namespace EunokiBot.Model
 
         public void RemoveItem(int nID)
         {
-            // Get index of slot with least amount of desired item
+            int nPos = 0;
+            int nMin = 99;
 
-            // Need to find index of slot that has same ID but has the least amount of it.
-            /*
-            int pos = ItemIDs.ToList().FindAll(obj => obj.Key == nID).Select(
-                obj => obj.Value).ToList().FindIndex(obj => obj.Aggregate(
-                (minItem, nextItem) => minItem < nextItem ? minItem : nextItem));
+            KeyValuePair<int, int>[] arItemIDs = ItemIDs.ToArray();
+            for(int i = 0; i < ItemIDs.Count(); ++i)
+            {
+                if (arItemIDs[i].Key != nID)
+                    continue;
 
-            int nAmount = GetAmount(pos) - 1;
+                if (nMin > arItemIDs[i].Value)
+                {
+                    nMin = arItemIDs[i].Value;
+                    nPos = i;
+                }
+            }
+
+            int nAmount = GetAmount(nPos) - 1;
             if (nAmount == 0)
                 nID = 0;
 
-            SetItemAt(pos, nID, nAmount);*/
-
+            SetItemAt(nPos, nID, nAmount);
         }
 
         public void SetItemAt(int nIndex, int nID, int nAmount)

@@ -33,9 +33,10 @@ namespace EunokiBot
         public async Task MainAsync()
         {
             m_singleton = this;
+
             if (String.IsNullOrEmpty(Config.Bot.token))
                 return;
-
+            
             _client = new DiscordSocketClient(new DiscordSocketConfig
             { LogLevel = LogSeverity.Verbose });
 

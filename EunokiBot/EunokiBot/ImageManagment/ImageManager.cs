@@ -25,7 +25,8 @@ namespace EunokiBot.ImageManagment
 
         private List<Bitmap> m_arBmpItems = new List<Bitmap>();
         private List<Bitmap> m_arBmpIcons = new List<Bitmap>();
-        private Bitmap m_bmpInventorySlot = null;
+        private Bitmap m_bmpSlotDefault = null;
+        private Bitmap m_bmpUserInfoDefault = null;
         #endregion
 
         #region Properties
@@ -53,17 +54,44 @@ namespace EunokiBot.ImageManagment
             }
         }
 
-        private Bitmap InventorySlot
+        private Bitmap SlotDefault
         {
             get
             {
-                if(m_bmpInventorySlot == null)
+                if(m_bmpSlotDefault == null)
                 {
-                    m_bmpInventorySlot = new Bitmap(Path.Combine(
+                    m_bmpSlotDefault = new Bitmap(Path.Combine(
                         FilePath, m_sUserInfoFileName, "InventorySlot.png"));
                 }
 
-                return m_bmpInventorySlot;
+                return m_bmpSlotDefault;
+            }
+        }
+
+        private Bitmap UserInfoDefault
+        {
+            get
+            {
+                if(m_bmpUserInfoDefault == null)
+                {
+                    m_bmpUserInfoDefault = new Bitmap(425, 450);
+                    using (Graphics g = Graphics.FromImage(m_bmpUserInfoDefault))
+                    {
+                        g.Clear(Color.FromArgb(251, 251, 251));
+
+                        // Icons
+                        g.DrawImage(Icons[0], 42f, 235f);
+                        g.DrawImage(Icons[1], 122f, 235f);
+                        g.DrawImage(Icons[2], 42f, 300f);
+                        g.DrawImage(Icons[3], 122f, 300f);
+                        g.DrawImage(Icons[4], 42, 365f);
+                        g.DrawImage(Icons[5], 122f, 365f);
+
+                        g.DrawImage(EmptyInventoryGrid(SlotDefault), 200, 25);
+                    }
+                }
+
+                return m_bmpUserInfoDefault;
             }
         }
 
@@ -139,13 +167,12 @@ namespace EunokiBot.ImageManagment
             #endregion
 
             // Getting User's Avatar
-            Bitmap bmpInventory = CreateInventoryImage(arIDs, arAmounts);
             System.Net.WebRequest request = System.Net.WebRequest.Create(contextUser.GetAvatarUrl());
             System.Net.WebResponse response = request.GetResponse();
             Stream responseStream = response.GetResponseStream();
             Bitmap bmpAvatar = new Bitmap(responseStream);
 
-            Bitmap result = new Bitmap(425, 450);
+            Bitmap result = UserInfoDefault;
 
             using (Graphics g = Graphics.FromImage(result))
             using (StringFormat sf = new StringFormat())
@@ -154,9 +181,10 @@ namespace EunokiBot.ImageManagment
                 sf.LineAlignment = StringAlignment.Center;
                 sf.Alignment = StringAlignment.Center;
 
-                g.Clear(Color.FromArgb(251, 251, 251));
+                List<Bitmap> arItems = CreateItemImages(arIDs, arAmounts);
+                Bitmap bmpInventoryItems = ItemsInventoryGrid(arItems);
+                g.DrawImage(bmpInventoryItems, 200, 25);
                 g.DrawImage(bmpAvatar, 25, 25, 150, 150);
-                g.DrawImage(bmpInventory, 200, 25);
 
                 #region Level
                 using (SolidBrush bEllip = new SolidBrush(Color.FromArgb(251, 251, 251)))
@@ -179,12 +207,11 @@ namespace EunokiBot.ImageManagment
                 {
                     g.FillRectangle(bRectBg, new Rectangle(25, 180, 150, 20));
 
-
                     int nOldLvlGap = Data.Singleton.Levels[user.Level].XPGap;
                     int nLvlGap = Data.Singleton.Levels[user.Level + 1].XPGap;
-
                     float fWidth = (user.XP - nOldLvlGap) / ((nLvlGap - nOldLvlGap) / 100);
                     fWidth *= 1.5f;
+
                     g.FillRectangle(bRectFg, new RectangleF(25, 180, fWidth, 20));
 
                     g.DrawString(user.XP.ToString() + " / " + Data.Singleton.Levels[user.Level + 1].XPGap.ToString(),
@@ -196,8 +223,6 @@ namespace EunokiBot.ImageManagment
                 using (Font f = new Font(FontCollection.Families[0], 12, FontStyle.Regular))
                 {
                     #region Money
-                    g.DrawImage(Icons[0], 42f, 235f);
-
                     string sMoney = String.Empty;
                     if (user.Money >= 100000)
                         sMoney = "+99999";
@@ -207,8 +232,6 @@ namespace EunokiBot.ImageManagment
                     #endregion
 
                     #region Messages
-                    g.DrawImage(Icons[1], 122f, 235f);
-
                     string sMessages = String.Empty;
                     if (user.Messages >= 100000)
                         sMessages = "+99999";
@@ -219,8 +242,6 @@ namespace EunokiBot.ImageManagment
 
                     #region Duels
                     #region Wins
-                    g.DrawImage(Icons[2], 42f, 300f);
-
                     string sWins = String.Empty;
                     if (user.Wins >= 100000)
                         sWins = "+99999";
@@ -229,9 +250,6 @@ namespace EunokiBot.ImageManagment
                     g.DrawString(sWins, f, b, new RectangleF(20, 335, 75, 17.5f), sf);
                     #endregion
                     #region Lost
-                    g.DrawImage(Icons[3], 122f, 300f);
-
-
                     string sLost = String.Empty;
                     if (user.Lost >= 100000)
                         sLost = "+99999";
@@ -242,8 +260,6 @@ namespace EunokiBot.ImageManagment
                     #endregion
 
                     #region Quests
-                    g.DrawImage(Icons[4], 42, 365f);
-
                     string sQuests = String.Empty;
                     if (user.Quests >= 100000)
                         sQuests = "+99999";
@@ -253,7 +269,6 @@ namespace EunokiBot.ImageManagment
                     #endregion
 
                     #region Warnings
-                    g.DrawImage(Icons[5], 122f, 365f);
                     g.DrawString(user.Warnings.ToString(), f, b, new RectangleF(100, 400, 75, 17.5f), sf);
                     #endregion
                 }
@@ -265,13 +280,72 @@ namespace EunokiBot.ImageManagment
         }
 
         #region Inventory
-        public Bitmap CreateInventoryImage(int[] nIDs, int[] nAmounts)
+        public Bitmap EmptyInventoryGrid(Bitmap bmpImage)
+        {
+            int nOffset = 10;
+            int nWidth = (bmpImage.Width + nOffset) * 2;
+            int nHeight = (bmpImage.Height + nOffset) * 4;
+            Bitmap result = new Bitmap(nWidth, nHeight);
+            result.MakeTransparent();
+
+            using(Graphics g = Graphics.FromImage(result))
+            {
+                int nOffsetX, nOffsetY;
+                nOffsetX = nOffsetY = 0;
+
+                for (int i = 0; i < 8; ++i)
+                {
+                    g.DrawImage(bmpImage,
+                        new Rectangle(nOffsetX, nOffsetY, bmpImage.Width, bmpImage.Height));
+
+                    nOffsetX += bmpImage.Width + nOffset;
+                    if (i % 2 == 1)
+                    {
+                        nOffsetX = 0;
+                        nOffsetY += bmpImage.Height + nOffset;
+                    }
+                }
+            }
+            return result;
+        }
+
+        public Bitmap ItemsInventoryGrid(List<Bitmap> arBmpItems)
+        {
+            int nOffset = 10;
+            int nWidth = (arBmpItems[0].Width + nOffset) * 2;
+            int nHeight = (arBmpItems[0].Height + nOffset) * 4;
+            Bitmap result = new Bitmap(nWidth, nHeight);
+            result.MakeTransparent();
+
+            using (Graphics g = Graphics.FromImage(result))
+            {
+                int nOffsetX, nOffsetY;
+                nOffsetX = nOffsetY = 0;
+
+                for (int i = 0; i < arBmpItems.Count(); ++i)
+                {
+                    g.DrawImage(arBmpItems[i],
+                        new Rectangle(nOffsetX, nOffsetY, arBmpItems[i].Width, arBmpItems[i].Height));
+
+                    nOffsetX += arBmpItems[i].Width + nOffset;
+                    if (i % 2 == 1)
+                    {
+                        nOffsetX = 0;
+                        nOffsetY += arBmpItems[i].Height + nOffset;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public List<Bitmap> CreateItemImages(int[] nIDs, int[] nAmounts)
         {
             List<Bitmap> arItems = new List<Bitmap>();
 
             for(int i = 0; i < nIDs.Length; ++i)
             {
-                Bitmap source2 = null;
+                Bitmap source2 = new Bitmap(90, 90);
 
                 if (nIDs[i] != 0 && nAmounts[i] != 0)
                 {
@@ -287,53 +361,10 @@ namespace EunokiBot.ImageManagment
                     }
                 }
 
-                arItems.Add(SourceOver(InventorySlot, source2, 5, 5));
+                arItems.Add(source2);
             }
 
-            Bitmap stitchedImage = CreateInventoryGrid(arItems);
-            return stitchedImage;
-        }
-
-        private Bitmap CreateInventoryGrid(List<Bitmap> images)
-        {
-            Bitmap finalImage = null;
-            try
-            {
-                int nOffset = 10;
-                int width = (images[0].Width + nOffset) * 2;
-                int height = (images[0].Height + nOffset) * 4;
-
-                finalImage = new Bitmap(width, height);
-
-                using (Graphics g = Graphics.FromImage(finalImage))
-                {
-                    g.Clear(Color.FromArgb(251, 251, 251));
-
-                    int offsetX = 0;
-                    int offsetY = 0;
-                    for(int i = 0; i < images.Count(); ++i)
-                    {
-                        g.DrawImage(images[i], new Rectangle(offsetX, offsetY, images[i].Width, images[i].Height));
-                        offsetX += images[i].Width + nOffset;
-                        if (i % 2 == 1)
-                        {
-                            offsetX = 0;
-                            offsetY += images[i].Height + nOffset;
-                        }
-                    }
-                }
-
-                return finalImage;
-            }
-            catch (Exception ex)
-            {
-                finalImage?.Dispose();
-                throw ex;
-            }
-            finally
-            {
-                images.ForEach(obj => obj.Dispose());
-            }
+            return arItems;
         }
         #endregion
     }
