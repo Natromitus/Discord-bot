@@ -6,6 +6,14 @@ using System.Linq;
 using EunokiBot.Model;
 using System.Reflection;
 
+/*
+- ImageEndings as array and property using it with IEnumberable<string>
+- OnAction - user.CurrentQuests.ElementAt(i)
+- Quest[] arQuests = user.CurrentQuests.Select(obj => Data.Singleton.Quests.FirstOrDefault(obj2 => obj2.QuestID == obj.Key)).ToArray();
+- QuestTypes return only items with custom attribute != null
+- BaseQuest.QuestInfo property and during the instantiate set to it the Quest (info)
+*/
+
 namespace EunokiBot.Quests
 {
     public class ActionManager
@@ -37,21 +45,28 @@ namespace EunokiBot.Quests
 
         public void OnAction(User user, ActionParam action)
         {
-            Quest[] arQuests = new Quest[3];
-
-            for(int i = 0; i < arQuests.Length; ++i)
+            Quest[] arQuests = user.CurrentQuests.Select(obj => Data.Singleton.Quests.FirstOrDefault(obj2 => obj2.QuestID == obj.Key)).ToArray();
+            for (int i = 0; i < arQuests.Length; ++i)
                 arQuests[i] = Data.Singleton.Quests.FirstOrDefault(obj => obj.QuestID == user.CurrentQuests.ToArray()[0].Key);
 
-            BaseQuest quest = null;
+            List<BaseQuest> arBaseQuests = new List<BaseQuest>();
+
+            foreach (Quest iter in arQuests)
+            {
+                TypeInfo foundClass = QuestTypes.FirstOrDefault(obj => obj.GetCustomAttribute<ActionAttribute>().Action == iter.Action);
+                BaseQuest baseQuest = (BaseQuest)Activator.CreateInstance(foundClass);
+                baseQuest.QuestInfo = iter;
+                arBaseQuests.Add(baseQuest);
+            }
+
             foreach (TypeInfo iter in QuestTypes)
             {
                 ActionAttribute attr = iter.GetCustomAttribute<ActionAttribute>();
-                if (attr == null)
-                    continue;
-
                 if (attr.Action == action.Action)
                 {
-                    quest = (BaseQuest)Activator.CreateInstance(iter);
+                    BaseQuest baseQuest = (BaseQuest)Activator.CreateInstance(iter);
+                    baseQuest.
+                    arBaseQuests.Add(baseQuest);
                     break;
                 }
             }
@@ -59,7 +74,7 @@ namespace EunokiBot.Quests
             if (quest == null)
                 return;
 
-            // TODO GET QUEST HERE HOW? I DUNNO BITCH JUST DO IT
+            // TODO GET QUEST HERE HOW?
             quest.OnActionProcess(user, , action.Parameter);
         }
     }
