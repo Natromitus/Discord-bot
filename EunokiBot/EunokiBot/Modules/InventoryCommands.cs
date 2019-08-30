@@ -63,9 +63,9 @@ namespace EunokiBot.Modules
             }
 
             if (targetUser != null)
-                inventory.InventoryItems[nIndex - 1].OnItemUse(Context, user, inventory, targetUser);
+                inventory.InventoryItems[nIndex - 1].Use(Context, user, inventory, targetUser);
             else
-                inventory.InventoryItems[nIndex - 1].OnItemUse(Context, user, inventory, sParam);
+                inventory.InventoryItems[nIndex - 1].Use(Context, user, inventory, sParam);
         }
     }
 }

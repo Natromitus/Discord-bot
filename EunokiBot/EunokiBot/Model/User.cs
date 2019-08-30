@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Dapper;
 
 namespace EunokiBot.Model
@@ -16,6 +17,12 @@ namespace EunokiBot.Model
         private int m_nQuests;
         private int m_nWins;
         private int m_nLost;
+        private int m_nQuestID1;
+        private int m_nQuestID2;
+        private int m_nQuestID3;
+        private int m_nProgress1;
+        private int m_nProgress2;
+        private int m_nProgress3;
         #endregion
 
         #region Properties
@@ -105,7 +112,71 @@ namespace EunokiBot.Model
                 SetField(ref m_nLost, value);
             }
         }
-        
+
+        private int QuestID1
+        {
+            get { return m_nQuestID1; }
+            set
+            {
+                SetField(ref m_nQuestID1, value);
+            }
+        }
+
+        private int Progress1
+        {
+            get { return m_nProgress1; }
+            set
+            {
+                SetField(ref m_nProgress1, value);
+            }
+        }
+
+        private int QuestID2
+        {
+            get { return m_nQuestID2; }
+            set
+            {
+                SetField(ref m_nQuestID2, value);
+            }
+        }
+
+        private int Progress2
+        {
+            get { return m_nProgress2; }
+            set
+            {
+                SetField(ref m_nProgress2, value);
+            }
+        }
+
+        private int QuestID3
+        {
+            get { return m_nQuestID3; }
+            set
+            {
+                SetField(ref m_nQuestID3, value);
+            }
+        }
+
+        private int Progress3
+        {
+            get { return m_nProgress3; }
+            set
+            {
+                SetField(ref m_nProgress3, value);
+            }
+        }
+
+        public IEnumerable<KeyValuePair<int, int>> CurrentQuests
+        {
+            get
+            {
+                yield return new KeyValuePair<int, int>(QuestID1, Progress1);
+                yield return new KeyValuePair<int, int>(QuestID2, Progress2);
+                yield return new KeyValuePair<int, int>(QuestID3, Progress3);
+            }
+        }
+
         public ulong UserID
         {
             get

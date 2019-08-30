@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
+using System.Linq;
 
 using Discord.WebSocket;
 using Discord.Commands;
 
 using EunokiBot.Model;
+using EunokiBot.Quests;
 
 namespace EunokiBot
 {
@@ -31,10 +33,25 @@ namespace EunokiBot
                 return;
 
             SocketCommandContext context = new SocketCommandContext(_client, sMessage);
-
             User user = User.Get(context.User.Id);
             if (user != null)
+            {
                 user.Messages++;
+                ActionParam action = null;
+
+                if (sMessage.Attachments.Count > 0)
+                {
+                    string sFileName = sMessage.Attachments.ToArray()[0].Filename;
+                    bool bIsImage = Data.Singleton.ImageEndings.Any(obj => sFileName.EndsWith(obj));
+                    if (bIsImage)
+                        action = new ActionParam("Picture", context.Channel.Id);
+
+                }
+                else
+                    action = new ActionParam("Message", context.Channel.Id);
+
+                ActionManager.Singleton.OnAction(user, action);
+            }
 
             int nArsPos = 0;
 

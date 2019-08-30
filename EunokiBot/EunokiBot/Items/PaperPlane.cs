@@ -10,7 +10,7 @@ namespace EunokiBot.Items
     [ItemID(8)]
     public class PaperPlane : BaseItem
     {
-        public override void OnItemUse(
+        protected override void OnItemUse(
             SocketCommandContext context, User user, Inventory inventory, object param = null)
         {
 

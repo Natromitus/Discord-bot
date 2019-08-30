@@ -23,10 +23,22 @@ namespace EunokiBot.ImageManagment
 
         private PrivateFontCollection m_fCollection = new PrivateFontCollection();
 
-        private List<Bitmap> m_arBmpItems = new List<Bitmap>();
-        private List<Bitmap> m_arBmpIcons = new List<Bitmap>();
+        private List<Bitmap> m_arBmpItems = null;
+        private List<Bitmap> m_arBmpIcons = null;
+        private List<Bitmap> m_arBmpShopDefault = null;
         private Bitmap m_bmpSlotDefault = null;
         private Bitmap m_bmpUserInfoDefault = null;
+
+        private readonly Color m_clrUserInfoBG = Color.FromArgb(251, 251, 251);
+        private readonly int m_nMargin = 25;
+        private readonly int m_nAvatar = 150;
+        private readonly int m_nLevelBG = 50;
+        private readonly int m_nIconX1 = 42;
+        private readonly int m_nIconX2 = 122;
+        private readonly int m_nIconY1 = 235;
+        private readonly int m_nIconY2 = 300;
+        private readonly int m_nIconY3 = 365;
+
         #endregion
 
         #region Properties
@@ -39,7 +51,7 @@ namespace EunokiBot.ImageManagment
                 return Assembly.GetEntryAssembly().Location.Replace(@"EunokiBot.dll", @"Resources"); ;
             }
         }
-        
+
         private PrivateFontCollection FontCollection
         {
             get
@@ -58,7 +70,7 @@ namespace EunokiBot.ImageManagment
         {
             get
             {
-                if(m_bmpSlotDefault == null)
+                if (m_bmpSlotDefault == null)
                 {
                     m_bmpSlotDefault = new Bitmap(Path.Combine(
                         FilePath, m_sUserInfoFileName, "InventorySlot.png"));
@@ -72,22 +84,22 @@ namespace EunokiBot.ImageManagment
         {
             get
             {
-                if(m_bmpUserInfoDefault == null)
+                if (m_bmpUserInfoDefault == null)
                 {
                     m_bmpUserInfoDefault = new Bitmap(425, 450);
                     using (Graphics g = Graphics.FromImage(m_bmpUserInfoDefault))
                     {
-                        g.Clear(Color.FromArgb(251, 251, 251));
+                        g.Clear(m_clrUserInfoBG);
 
                         // Icons
-                        g.DrawImage(Icons[0], 42f, 235f);
-                        g.DrawImage(Icons[1], 122f, 235f);
-                        g.DrawImage(Icons[2], 42f, 300f);
-                        g.DrawImage(Icons[3], 122f, 300f);
-                        g.DrawImage(Icons[4], 42, 365f);
-                        g.DrawImage(Icons[5], 122f, 365f);
+                        g.DrawImage(Icons[0], m_nIconX1, m_nIconY1);
+                        g.DrawImage(Icons[1], m_nIconX2, m_nIconY1);
+                        g.DrawImage(Icons[2], m_nIconX1, m_nIconY2);
+                        g.DrawImage(Icons[3], m_nIconX2, m_nIconY2);
+                        g.DrawImage(Icons[4], m_nIconX1, m_nIconY3);
+                        g.DrawImage(Icons[5], m_nIconX2, m_nIconY3);
 
-                        g.DrawImage(EmptyInventoryGrid(SlotDefault), 200, 25);
+                        g.DrawImage(SlotGrid(SlotDefault, 2, 4), m_nAvatar + 2 * m_nMargin, m_nMargin);
                     }
                 }
 
@@ -95,12 +107,49 @@ namespace EunokiBot.ImageManagment
             }
         }
 
+        private List<Bitmap> ShopDefault
+        {
+            get
+            {
+                if (m_arBmpShopDefault == null)
+                {
+                    m_arBmpShopDefault = new List<Bitmap>();
+
+                    int nPages = Data.Singleton.ShopPages;
+
+                    for (int i = 1; i <= nPages; ++i)
+                    {
+                        Bitmap bmpPage = new Bitmap(450, 380);
+                        using (Graphics g = Graphics.FromImage(bmpPage))
+                        {
+                            g.Clear(m_clrUserInfoBG);
+                            using (Font f = new Font(FontCollection.Families[0], 14, FontStyle.Bold))
+                            using (SolidBrush b = new SolidBrush(Color.Black))
+                                g.DrawString($"Page {i} / {nPages}", f, b, new RectangleF(m_nMargin, m_nMargin, 225, 27.5f)); 
+
+                            g.DrawImage(SlotGrid(SlotDefault, 4, 3), m_nMargin, m_nMargin + 30);
+
+                            List<Bitmap> arItems = CreateShopItems(i);
+                            Bitmap image = ItemsGrid(arItems, 4, 3);
+
+                            g.DrawImage(image, 25, 55);
+                        }
+
+                        m_arBmpShopDefault.Add(bmpPage);
+                    }
+                }
+
+                return m_arBmpShopDefault;
+            }
+        }
+
         private List<Bitmap> Items
         {
             get
             {
-                if(m_arBmpItems.Count == 0)
+                if (m_arBmpItems == null)
                 {
+                    m_arBmpItems = new List<Bitmap>();
                     string[] files = Directory.GetFiles(Path.Combine(FilePath, m_sIDFileName));
                     m_arBmpItems = files.Select(obj => new Bitmap(obj)).ToList();
                 }
@@ -113,8 +162,9 @@ namespace EunokiBot.ImageManagment
         {
             get
             {
-                if (m_arBmpIcons.Count == 0)
+                if (m_arBmpIcons == null)
                 {
+                    m_arBmpIcons = new List<Bitmap>();
                     string[] files = Directory.GetFiles(Path.Combine(FilePath, m_sUserInfoFileName, "Icons"));
                     m_arBmpIcons = files.Select(obj => new Bitmap(obj)).ToList();
                 }
@@ -126,19 +176,7 @@ namespace EunokiBot.ImageManagment
         #endregion
 
         #region Generic Functions
-        private Bitmap SourceOver(Bitmap source1, Bitmap source2, int x = 0, int y = 0)
-        {
-            Bitmap result = new Bitmap(source1.Width, source1.Height);
-            using (Graphics g = Graphics.FromImage(result))
-            {
-                g.DrawImage(source1, new Rectangle(Point.Empty, result.Size));
 
-                if (source2 != null)
-                    g.DrawImage(source2, new Rectangle(x, y, source2.Width, source2.Height));
-            }
-
-            return result;
-        }
         #endregion
 
         public string Truncate(string value, int maxChars)
@@ -172,7 +210,7 @@ namespace EunokiBot.ImageManagment
             Stream responseStream = response.GetResponseStream();
             Bitmap bmpAvatar = new Bitmap(responseStream);
 
-            Bitmap result = UserInfoDefault;
+            Bitmap result = new Bitmap(UserInfoDefault);
 
             using (Graphics g = Graphics.FromImage(result))
             using (StringFormat sf = new StringFormat())
@@ -182,40 +220,42 @@ namespace EunokiBot.ImageManagment
                 sf.Alignment = StringAlignment.Center;
 
                 List<Bitmap> arItems = CreateItemImages(arIDs, arAmounts);
-                Bitmap bmpInventoryItems = ItemsInventoryGrid(arItems);
-                g.DrawImage(bmpInventoryItems, 200, 25);
-                g.DrawImage(bmpAvatar, 25, 25, 150, 150);
+                Bitmap bmpInventoryItems = ItemsGrid(arItems, 2, 4);
+                g.DrawImage(bmpAvatar, m_nMargin, m_nMargin, m_nAvatar, m_nAvatar);
+                g.DrawImage(bmpInventoryItems, m_nAvatar + 2 * m_nMargin, m_nMargin);
 
                 #region Level
-                using (SolidBrush bEllip = new SolidBrush(Color.FromArgb(251, 251, 251)))
-                    g.FillEllipse(bEllip, 150, 150, 50, 50);
+                using (SolidBrush bEllip = new SolidBrush(m_clrUserInfoBG))
+                    g.FillEllipse(bEllip, m_nAvatar, m_nAvatar, m_nLevelBG, m_nLevelBG);
 
                 using (Font f = new Font(FontCollection.Families[0], 12, FontStyle.Bold))
-                    g.DrawString(user.Level.ToString(), f, b, new Rectangle(148, 159, 40, 17), sf);
+                    g.DrawString(user.Level.ToString(), f, b, new Rectangle(148, 159, 40, 18), sf);
                 #endregion
 
                 #region Username
                 using (Font f = new Font(FontCollection.Families[0], 14, FontStyle.Bold))
-                    g.DrawString(Truncate(contextUser.Username.ToUpper(), 11), f, b, new RectangleF(22.5f, 200, 225, 27.5f));
+                    g.DrawString(Truncate(contextUser.Username.ToUpper(), 11), f, b,
+                        new Rectangle(m_nMargin, m_nAvatar + 2 * m_nMargin, m_nAvatar + 3 * m_nMargin, 28));
                 #endregion
 
                 #region XPBar
                 using (SolidBrush bRectFg = new SolidBrush(Color.FromArgb(90, 130, 190)))
                 using (SolidBrush bRectBg = new SolidBrush(Color.FromArgb(150, 180, 240)))
-                using (SolidBrush bXP = new SolidBrush(Color.FromArgb(0, 0, 0)))
+                using (SolidBrush bXP = new SolidBrush(Color.Black))
                 using (Font fXP = new Font(FontCollection.Families[0], 8, FontStyle.Regular))
                 {
-                    g.FillRectangle(bRectBg, new Rectangle(25, 180, 150, 20));
+                    g.FillRectangle(bRectBg, new Rectangle(m_nMargin, m_nMargin + m_nAvatar + 5, m_nAvatar, 20));
 
+                    //Calculating XP Progress
                     int nOldLvlGap = Data.Singleton.Levels[user.Level].XPGap;
                     int nLvlGap = Data.Singleton.Levels[user.Level + 1].XPGap;
                     float fWidth = (user.XP - nOldLvlGap) / ((nLvlGap - nOldLvlGap) / 100);
                     fWidth *= 1.5f;
 
-                    g.FillRectangle(bRectFg, new RectangleF(25, 180, fWidth, 20));
+                    g.FillRectangle(bRectFg, new RectangleF(m_nMargin, m_nMargin + m_nAvatar + 5, fWidth, 20));
 
                     g.DrawString(user.XP.ToString() + " / " + Data.Singleton.Levels[user.Level + 1].XPGap.ToString(),
-                    fXP, b, new RectangleF(25, 179, 150, 20), sf);
+                    fXP, b, new RectangleF(m_nMargin, 179, m_nAvatar, 20), sf);
                 }
                 #endregion
 
@@ -279,41 +319,18 @@ namespace EunokiBot.ImageManagment
             return user.UserID + ".png";
         }
 
-        #region Inventory
-        public Bitmap EmptyInventoryGrid(Bitmap bmpImage)
+        public string Shop(int nPage)
         {
-            int nOffset = 10;
-            int nWidth = (bmpImage.Width + nOffset) * 2;
-            int nHeight = (bmpImage.Height + nOffset) * 4;
-            Bitmap result = new Bitmap(nWidth, nHeight);
-            result.MakeTransparent();
-
-            using(Graphics g = Graphics.FromImage(result))
-            {
-                int nOffsetX, nOffsetY;
-                nOffsetX = nOffsetY = 0;
-
-                for (int i = 0; i < 8; ++i)
-                {
-                    g.DrawImage(bmpImage,
-                        new Rectangle(nOffsetX, nOffsetY, bmpImage.Width, bmpImage.Height));
-
-                    nOffsetX += bmpImage.Width + nOffset;
-                    if (i % 2 == 1)
-                    {
-                        nOffsetX = 0;
-                        nOffsetY += bmpImage.Height + nOffset;
-                    }
-                }
-            }
-            return result;
+            ShopDefault[nPage - 1].Save(Path.Combine(FilePath, "shop.png"), ImageFormat.Png);
+            return "shop.png";
         }
 
-        public Bitmap ItemsInventoryGrid(List<Bitmap> arBmpItems)
+        #region Generic
+        private Bitmap SlotGrid(Bitmap bmpSlot, int nX, int nY)
         {
             int nOffset = 10;
-            int nWidth = (arBmpItems[0].Width + nOffset) * 2;
-            int nHeight = (arBmpItems[0].Height + nOffset) * 4;
+            int nWidth = (bmpSlot.Width + nOffset) * nX;
+            int nHeight = (bmpSlot.Height + nOffset) * nY;
             Bitmap result = new Bitmap(nWidth, nHeight);
             result.MakeTransparent();
 
@@ -322,13 +339,42 @@ namespace EunokiBot.ImageManagment
                 int nOffsetX, nOffsetY;
                 nOffsetX = nOffsetY = 0;
 
-                for (int i = 0; i < arBmpItems.Count(); ++i)
+                for (int i = 0; i < nX * nY; ++i)
+                {
+                    g.DrawImage(bmpSlot,
+                        new Rectangle(nOffsetX, nOffsetY, bmpSlot.Width, bmpSlot.Height));
+
+                    nOffsetX += bmpSlot.Width + nOffset;
+                    if (i % nX == nX - 1)
+                    {
+                        nOffsetX = 0;
+                        nOffsetY += bmpSlot.Height + nOffset;
+                    }
+                }
+            }
+            return result;
+        }
+
+        private Bitmap ItemsGrid(List<Bitmap> arBmpItems, int nX, int nY)
+        {
+            int nOffset = 10;
+            int nWidth = (arBmpItems[0].Width + nOffset) * nX;
+            int nHeight = (arBmpItems[0].Height + nOffset) * nY;
+            Bitmap result = new Bitmap(nWidth, nHeight);
+            result.MakeTransparent();
+
+            using (Graphics g = Graphics.FromImage(result))
+            {
+                int nOffsetX, nOffsetY;
+                nOffsetX = nOffsetY = 0;
+
+                for (int i = 0; i < nX * nY; ++i)
                 {
                     g.DrawImage(arBmpItems[i],
                         new Rectangle(nOffsetX, nOffsetY, arBmpItems[i].Width, arBmpItems[i].Height));
 
                     nOffsetX += arBmpItems[i].Width + nOffset;
-                    if (i % 2 == 1)
+                    if (i % nX == nX - 1)
                     {
                         nOffsetX = 0;
                         nOffsetY += arBmpItems[i].Height + nOffset;
@@ -338,12 +384,14 @@ namespace EunokiBot.ImageManagment
 
             return result;
         }
+        #endregion
 
-        public List<Bitmap> CreateItemImages(int[] nIDs, int[] nAmounts)
+        #region Inventory
+        private List<Bitmap> CreateItemImages(int[] nIDs, int[] nAmounts)
         {
             List<Bitmap> arItems = new List<Bitmap>();
 
-            for(int i = 0; i < nIDs.Length; ++i)
+            for (int i = 0; i < nIDs.Length; ++i)
             {
                 Bitmap source2 = new Bitmap(90, 90);
 
@@ -351,13 +399,48 @@ namespace EunokiBot.ImageManagment
                 {
                     Bitmap temp = Items[nIDs[i] - 1];
 
-                    source2 = new Bitmap(temp.Width, temp.Height);
                     using (Graphics g = Graphics.FromImage(source2))
-                    using (Font f = new Font(FontCollection.Families[0], 12, FontStyle.Bold))
+                    using (Font f = new Font(FontCollection.Families[0], 12, FontStyle.Regular))
                     using (SolidBrush b = new SolidBrush(Color.Black))
+                    using (StringFormat sf = new StringFormat())
                     {
+                        sf.Alignment = StringAlignment.Far;
                         g.DrawImage(temp, Point.Empty);
-                        g.DrawString(nAmounts[i].ToString(), f, b, new Rectangle(55, 60, 40, 18));
+                        g.DrawString(nAmounts[i].ToString(), f, b, new Rectangle(55, 65, 30, 18), sf);
+                    }
+                }
+
+                arItems.Add(source2);
+            }
+
+            return arItems;
+        }
+        #endregion
+
+        #region Shops
+        private List<Bitmap> CreateShopItems(int nPage)
+        {
+            List<Bitmap> arItems = new List<Bitmap>();
+
+            for (int i = (nPage - 1)* 12; i < nPage * 12; ++i)
+            {
+                Bitmap source2 = new Bitmap(90, 90);
+
+                if (i < Items.Count)
+                {
+                    Bitmap temp = Items[i];
+
+                    using (Graphics g = Graphics.FromImage(source2))
+                    using (Font f = new Font(FontCollection.Families[0], 12, FontStyle.Regular))
+                    using (SolidBrush b = new SolidBrush(Color.Black))
+                    using (StringFormat sf = new StringFormat())
+                    {
+                        sf.Alignment = StringAlignment.Far;
+                        g.DrawImage(temp, Point.Empty);
+                        g.DrawImage(Icons[0], new Rectangle(65, 65, 20, 20));
+
+                        int nPrice = Data.Singleton.Items[i].Price;
+                        g.DrawString(nPrice.ToString(), f, b, new Rectangle(15, 65, 55, 18), sf);
                     }
                 }
 

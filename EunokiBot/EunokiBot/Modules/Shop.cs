@@ -7,6 +7,9 @@ using Discord.Commands;
 using Discord.WebSocket;
 
 using EunokiBot.Model;
+using EunokiBot.ImageManagment;
+using Discord.Rest;
+using System.IO;
 
 namespace EunokiBot
 {
@@ -16,19 +19,39 @@ namespace EunokiBot
         public class ShopGroup : ModuleBase<SocketCommandContext>
         {
             [Command(""), Alias("show"), Summary("Display shop items.")]
-            public async Task Show()
+            public async Task Show(int nPage = 0)
             {
-                int nCount = SQL.Singleton.GetCount("Items");
+                int nShopPages = Data.Singleton.ShopPages;
 
-                List<Item> items = new List<Item>();
-                for(int i = 1; i <= nCount; ++i)
-                    items.Add(Item.GetItemByID(i));
+                if (nPage == 0)
+                    nPage = 1;
 
-                string sTemp = "";
-                foreach (Item item in items.Where(obj => obj != null))
-                    sTemp += $"{item.ItemID}. {item.Name} for {item.Price} - {item.Description}\n";
+                if (nPage > nShopPages)
+                {
+                    _ = Context.Channel.SendMessageAsync(":x: Invalid Shop page!");
+                    return;
+                }
 
-                _ = await Context.Channel.SendMessageAsync($"Shop:\n" + sTemp);
+                SocketTextChannel channel = Context.Guild.GetChannel(606567031730601985) as SocketTextChannel;
+                if (channel == null)
+                    return;
+
+                string sImageFileName = ImageManager.Singleton.Shop(nPage);
+                if (sImageFileName == string.Empty)
+                    return;
+
+                RestUserMessage picture = await channel.SendFileAsync(
+                    Path.Combine(ImageManager.Singleton.FilePath, sImageFileName), string.Empty);
+                string imgurl = picture.Attachments.First().Url;
+
+                EmbedBuilder embed = new EmbedBuilder();
+                embed.WithImageUrl(imgurl);
+
+                File.Delete(Path.Combine(ImageManager.Singleton.FilePath, sImageFileName));
+
+                await Context.Channel.SendMessageAsync("", false, embed.Build());
+                await Task.Delay(500);
+                _ = picture.DeleteAsync();
             }
 
             [Command("buy"), Alias("purchase"), Summary("Buy item from shop.")]

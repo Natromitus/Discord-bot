@@ -11,7 +11,7 @@ namespace EunokiBot.Items
     [ItemID(2)]
     public class ChewingGum : BaseItem
     {
-        public override void OnItemUse(
+        protected override void OnItemUse(
             SocketCommandContext context, User user, Inventory inventory, object param = null)
         {
 

@@ -35,38 +35,22 @@ namespace EunokiBot
                 if (channel == null)
                     return;
 
-                
-                
                 string sImageFileName = ImageManager.Singleton.UserInfo(Context.User, user, inventory);
                 if (sImageFileName == string.Empty)
                     return;
-
                 
                 RestUserMessage picture = await channel.SendFileAsync(
                     Path.Combine(ImageManager.Singleton.FilePath, sImageFileName), string.Empty);
                 string imgurl = picture.Attachments.First().Url;
 
-                var embed = new EmbedBuilder
-                {
-                    /*Author = new EmbedAuthorBuilder
-                    {
-                        Name = "General info",
-                        IconUrl = Context.Guild.IconUrl,
-                    },
-                    ThumbnailUrl = Context.User.GetAvatarUrl(),
-                    Title = Context.User.Username,
-                    Description = $"Level {user.Level}        XP: {user.XP}/{Data.Singleton.Levels[user.Level + 1].XPGap}\n" +
-                    $"Money: {user.Money}",
-                    Color = Color.Blue*/
-                };
-
+                EmbedBuilder embed = new EmbedBuilder();
                 embed.WithImageUrl(imgurl);
 
-                //File.Delete(Path.Combine(ImageManager.Singleton.FilePath, sImageFileName));
+                File.Delete(Path.Combine(ImageManager.Singleton.FilePath, sImageFileName));
 
                 await Context.Channel.SendMessageAsync("", false, embed.Build());
                 await Task.Delay(500);
-                //_ = picture.DeleteAsync();
+                _ = picture.DeleteAsync();
             }
         }
     }
