@@ -10,7 +10,7 @@
         #region Properties
         public int QuestID { get; private set; }
         public int Difficulty { get; private set; }
-        public int Action { get; private set; }
+        public string Action { get; private set; }
         public int Amount { get; private set; }
         public string Name { get; private set; }
         public string Description { get; private set; }

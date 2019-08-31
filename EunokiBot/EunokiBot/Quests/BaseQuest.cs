@@ -8,6 +8,16 @@ namespace EunokiBot.Quests
 {
     public abstract class BaseQuest
     {
-        public abstract void OnActionProcess(User user, Quest quest, int param);
+        public Quest QuestInfo { get; set; }
+
+        public void OnAction(User user, ulong param)
+        {
+            if (OnActionProcess(user, QuestInfo, param))
+                AddProgress(user, QuestInfo);
+        }
+
+        public abstract bool OnActionProcess(User user, Quest quest, ulong param);
+
+        public abstract bool AddProgress(User user, Quest quest);
     }
 }

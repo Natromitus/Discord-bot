@@ -22,7 +22,11 @@ namespace EunokiBot.Model
         private List<Quest> m_arHardQuests = null;
         private List<Quest> m_arLegendaryQuests = null;
 
-        private List<string> m_arImageEndings = null;
+        private string[] m_arImageEndings =
+        {
+            ".png", ".jpg", ".jpeg",
+            ".tiff", ".gif", ".bmp"
+        };
         #endregion
 
         #region Properties
@@ -89,7 +93,7 @@ namespace EunokiBot.Model
                 {
                     Assembly assy = Assembly.GetEntryAssembly();
                     m_arItemTypes = assy.DefinedTypes.Where(
-                        obj => typeof(BaseItem).IsAssignableFrom(obj)).ToList();
+                        obj => typeof(BaseItem).IsAssignableFrom(obj) && obj.GetCustomAttribute<ItemIDAttribute>() != null).ToList();
                 }
 
                 return m_arItemTypes;
@@ -157,23 +161,7 @@ namespace EunokiBot.Model
             }
         }
 
-        public List<string> ImageEndings
-        {
-            get
-            {
-                if(m_arImageEndings == null)
-                {
-                    m_arImageEndings.Add(".png");
-                    m_arImageEndings.Add(".jpg");
-                    m_arImageEndings.Add(".jpeg");
-                    m_arImageEndings.Add(".tiff");
-                    m_arImageEndings.Add(".gif");
-                    m_arImageEndings.Add(".bmp");
-                }
-
-                return m_arImageEndings;
-            }
-        }
+        public IEnumerable<string> ImageEndings => m_arImageEndings;
 
         #endregion
     }
