@@ -44,7 +44,7 @@ namespace EunokiBot.Quests
             Quest[] arQuests = user.CurrentQuests.Select(obj => Data.Singleton.Quests.FirstOrDefault(obj2 => obj2.QuestID == obj.Key)).ToArray();
             List<BaseQuest> arBaseQuests = new List<BaseQuest>();
 
-            foreach (Quest iter in arQuests)
+            foreach (Quest iter in arQuests.Where(obj => obj.Action == action.Action))
             {
                 TypeInfo foundClass = QuestTypes.FirstOrDefault(obj => obj.GetCustomAttribute<ActionAttribute>().Action == iter.Action);
                 BaseQuest baseQuest = (BaseQuest)Activator.CreateInstance(foundClass);
@@ -53,7 +53,7 @@ namespace EunokiBot.Quests
             }
 
             foreach(BaseQuest baseQuest in arBaseQuests)
-                baseQuest.OnAction(user, action.Parameter);
+                baseQuest.Action(user, action.Parameter);
         }
     }
 }

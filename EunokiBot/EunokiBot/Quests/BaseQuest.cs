@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
+using System.Linq;
+
 using EunokiBot.Model;
 
 namespace EunokiBot.Quests
@@ -10,7 +12,7 @@ namespace EunokiBot.Quests
     {
         public Quest QuestInfo { get; set; }
 
-        public void OnAction(User user, ulong param)
+        public void Action(User user, ulong param)
         {
             if (OnActionProcess(user, QuestInfo, param))
                 AddProgress(user, QuestInfo);
@@ -18,6 +20,17 @@ namespace EunokiBot.Quests
 
         public abstract bool OnActionProcess(User user, Quest quest, ulong param);
 
-        public abstract bool AddProgress(User user, Quest quest);
+        private void AddProgress(User user, Quest quest)
+        {
+            int userQuestIndex = user.CurrentQuests.ToList().FindIndex(obj => obj.Key == quest.QuestID);
+            if(user.AddProgressOnIndex(userQuestIndex, quest.Amount))
+            {
+                QuestReward reward = QuestReward.GetRewardByDifficulty(quest.Difficulty);
+                user.XP += reward.XP;
+                
+                
+
+            }
+        }
     }
 }

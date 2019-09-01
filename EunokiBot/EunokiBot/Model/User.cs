@@ -218,6 +218,36 @@ namespace EunokiBot.Model
                 $" VALUES (@{PRIMARY_KEY}, @Warnings, @Messages, @Level, @XP, @Money, @Quests, @Wins, @Lost)", user);
         }
 
+        public bool AddProgressOnIndex(int index, int maxProgress)
+        {
+            switch (index)
+            {
+                case 0:
+                    if(++Progress1 >= maxProgress)
+                    {
+                        QuestID1 = Progress1 = 0;
+                        return true;
+                    }
+                    break;
+                case 1:
+                    if (++Progress2 >= maxProgress)
+                    {
+                        QuestID2 = Progress2 = 0;
+                        return true;
+                    }
+                    break;
+                case 2:
+                    if (++Progress3 >= maxProgress)
+                    {
+                        QuestID3 = Progress3 = 0;
+                        return true;
+                    }
+                    break;
+            }
+
+            return false;
+        }
+
         protected override string OnGetTableName() => TABLE_NAME;
         protected override string OnGetPrimaryKeyName() => PRIMARY_KEY;
         protected override object OnGetPrimaryKeyValue() => SQLUser_ID;
