@@ -31,26 +31,14 @@ namespace EunokiBot
                 if (inventory == null)
                     return;
 
-                SocketTextChannel channel = Context.Guild.GetChannel(606567031730601985) as SocketTextChannel;
-                if (channel == null)
-                    return;
-
                 string sImageFileName = ImageManager.Singleton.UserInfo(Context.User, user, inventory);
                 if (sImageFileName == string.Empty)
                     return;
                 
-                RestUserMessage picture = await channel.SendFileAsync(
+                RestUserMessage picture = await Context.Channel.SendFileAsync(
                     Path.Combine(ImageManager.Singleton.FilePath, sImageFileName), string.Empty);
-                string imgurl = picture.Attachments.First().Url;
-
-                EmbedBuilder embed = new EmbedBuilder();
-                embed.WithImageUrl(imgurl);
 
                 File.Delete(Path.Combine(ImageManager.Singleton.FilePath, sImageFileName));
-
-                await Context.Channel.SendMessageAsync("", false, embed.Build());
-                await Task.Delay(500);
-                _ = picture.DeleteAsync();
             }
         }
     }

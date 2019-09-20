@@ -6,6 +6,8 @@ using Discord.Commands;
 using Discord.WebSocket;
 
 using EunokiBot.Model;
+using EunokiBot.Quests;
+using System;
 
 namespace EunokiBot.Modules
 {
@@ -61,6 +63,9 @@ namespace EunokiBot.Modules
                 _ = Context.Channel.SendMessageAsync(":x: Something went wrong.");
                 return;
             }
+
+            ActionParam action = new ActionParam("Item", Convert.ToUInt64(inventory.GetID(nIndex - 1)));
+            ActionManager.Singleton.OnAction(user, action);
 
             if (targetUser != null)
                 inventory.InventoryItems[nIndex - 1].Use(Context, user, inventory, targetUser);

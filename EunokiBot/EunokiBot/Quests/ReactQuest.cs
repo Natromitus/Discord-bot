@@ -5,8 +5,8 @@ using EunokiBot.Model;
 
 namespace EunokiBot.Quests
 {
-    [ActionAttribute("Messages")]
-    public class MessageQuest : BaseQuest
+    [ActionAttribute("React")]
+    public class ReactQuest : BaseQuest
     {
         public override bool OnActionProcess(Quest quest, ulong param)
         {

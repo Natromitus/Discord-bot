@@ -44,11 +44,11 @@ namespace EunokiBot
                     string sFileName = sMessage.Attachments.ToArray()[0].Filename;
                     bool bIsImage = Data.Singleton.ImageEndings.Any(obj => sFileName.EndsWith(obj));
                     if (bIsImage)
-                        action = new ActionParam("Picture", context.Channel.Id);
+                        action = new ActionParam("Pictures", context.Channel.Id);
 
                 }
                 else
-                    action = new ActionParam("Message", context.Channel.Id);
+                    action = new ActionParam("Messages", context.Channel.Id);
 
                 ActionManager.Singleton.OnAction(user, action);
             }

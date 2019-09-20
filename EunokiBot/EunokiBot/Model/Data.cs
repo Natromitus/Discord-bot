@@ -60,7 +60,7 @@ namespace EunokiBot.Model
                     m_arLevels = new List<Level>();
 
                     int nCount = SQL.Singleton.GetCount(Level.TABLE_NAME);
-                    for (int i = 0; i <= nCount; ++i)
+                    for (int i = 1; i <= nCount; ++i)
                         m_arLevels.Add(SQL.Singleton.GetValue<Level>(Level.TABLE_NAME, "*", Level.PRIMARY_KEY, i));
                 }
 
@@ -109,7 +109,7 @@ namespace EunokiBot.Model
                     m_arQuests = new List<Quest>();
 
                     int nCount = SQL.Singleton.GetCount(Quest.TABLE_NAME);
-                    for (int i = 1; i <= nCount; ++i)
+                    for (int i = 0; i < nCount; ++i)
                         m_arQuests.Add(SQL.Singleton.GetValue<Quest>(Quest.TABLE_NAME, "*", Quest.PRIMARY_KEY, i));
                 }
 

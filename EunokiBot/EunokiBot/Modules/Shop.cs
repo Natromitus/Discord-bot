@@ -32,8 +32,7 @@ namespace EunokiBot
                     return;
                 }
 
-                SocketTextChannel channel = Context.Guild.GetChannel(606567031730601985) as SocketTextChannel;
-                if (channel == null)
+                if (!(Context.Guild.GetChannel(606567031730601985) is SocketTextChannel channel))
                     return;
 
                 string sImageFileName = ImageManager.Singleton.Shop(nPage);
@@ -86,7 +85,7 @@ namespace EunokiBot
 
                 int nResult = inventory.AddItem(nID, nAmount);
 
-                if(nResult == nAmount)
+                if (nResult == nAmount)
                 {
                     _ = await Context.Channel.SendMessageAsync(":x: Full inventory!");
                     return;

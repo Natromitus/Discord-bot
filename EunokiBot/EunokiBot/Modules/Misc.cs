@@ -9,11 +9,30 @@ using Discord.Commands;
 using Discord.WebSocket;
 
 using EunokiBot.Model;
+using EunokiBot.ImageManagment;
 
 namespace EunokiBot.Modules
 {
     public class Misc : ModuleBase<SocketCommandContext>
     {
+        [Command("suggestions")]
+        public async Task SuggestionsAsync()
+        {
+            _ = Context.Channel.SendMessageAsync(
+                "📧 Any ideas or suggestions how to improve something?\n" +
+                "We value your feedback and this is perfect place to let us know what you think!");
+        }
+
+        [Command("socialmedia")]
+    
+        public async Task SocialMediaAsync()
+        {
+
+            string sFilePath = ImageManager.Singleton.FilePath;
+            EmbedBuilder embedIG = new EmbedBuilder();
+            embedIG.WithImageUrl(imgurl);
+        }
+
         [Command("register")]
         public async Task RegisterAsync()
         {

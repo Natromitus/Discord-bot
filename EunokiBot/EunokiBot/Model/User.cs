@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Dapper;
 
@@ -64,7 +65,7 @@ namespace EunokiBot.Model
             }
         }
 
-        public int XP
+        public int XP   
         {
             get { return m_nXP; }
             set
@@ -72,7 +73,7 @@ namespace EunokiBot.Model
                 if (!SetField(ref m_nXP, value))
                     return;
 
-                if (m_nXP >= Data.Singleton.Levels[Level + 1].XPGap)
+                if (m_nXP >= Data.Singleton.Levels[Level].XPGap)
                     ++Level;
             }
         }
@@ -113,7 +114,7 @@ namespace EunokiBot.Model
             }
         }
 
-        private int QuestID1
+        public int QuestID1
         {
             get { return m_nQuestID1; }
             set
@@ -122,7 +123,7 @@ namespace EunokiBot.Model
             }
         }
 
-        private int Progress1
+        public int Progress1
         {
             get { return m_nProgress1; }
             set
@@ -131,7 +132,7 @@ namespace EunokiBot.Model
             }
         }
 
-        private int QuestID2
+        public int QuestID2
         {
             get { return m_nQuestID2; }
             set
@@ -140,7 +141,7 @@ namespace EunokiBot.Model
             }
         }
 
-        private int Progress2
+        public int Progress2
         {
             get { return m_nProgress2; }
             set
@@ -149,7 +150,7 @@ namespace EunokiBot.Model
             }
         }
 
-        private int QuestID3
+        public int QuestID3
         {
             get { return m_nQuestID3; }
             set
@@ -158,7 +159,7 @@ namespace EunokiBot.Model
             }
         }
 
-        private int Progress3
+        public int Progress3
         {
             get { return m_nProgress3; }
             set
@@ -192,9 +193,13 @@ namespace EunokiBot.Model
 
         public User(ulong id)
         {
-            UserID = id;
-            Warnings = Messages = XP = Money = Quests = Wins = Lost = 0;
-            Level = 1;
+            using (WriteSuspender wSus = new WriteSuspender())
+            {
+                UserID = id;
+                Level = 1;
+                Warnings = Messages = XP = Money = Quests = Wins = Lost = 0;
+                AssignQuests();
+            }
         }
 
         protected User()
@@ -213,9 +218,11 @@ namespace EunokiBot.Model
 
         public static void NewRecord(User user)
         {
-            SQL.Singleton.Connection.Execute($"INSERT INTO {TABLE_NAME}" +
-                $"({PRIMARY_KEY}, Warnings, Messages, Level, XP, Money, Quests, Wins, Lost)" +
-                $" VALUES (@{PRIMARY_KEY}, @Warnings, @Messages, @Level, @XP, @Money, @Quests, @Wins, @Lost)", user);
+           SQL.Singleton.Connection.Execute($"INSERT INTO {TABLE_NAME}" +
+                $" ({PRIMARY_KEY}, Warnings, Messages, Level, XP, Money, Quests, Wins, Lost," +
+                $" QuestID1, Progress1, QuestID2, Progress2, QuestID3, Progress3)" +
+                $" VALUES (@{PRIMARY_KEY}, @Warnings, @Messages, @Level, @XP, @Money, @Quests, @Wins, @Lost," +
+                $" @QuestID1, @Progress1, @QuestID2, @Progress2, @QuestID3, @Progress3)", user);
         }
 
         public bool AddProgressOnIndex(int index, int maxProgress)
@@ -223,7 +230,7 @@ namespace EunokiBot.Model
             switch (index)
             {
                 case 0:
-                    if(++Progress1 >= maxProgress)
+                    if (++Progress1 >= maxProgress)
                     {
                         QuestID1 = Progress1 = 0;
                         return true;
@@ -246,6 +253,84 @@ namespace EunokiBot.Model
             }
 
             return false;
+        }
+
+        public void RemoveProgressOnIndex(int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    if (--Progress1 < 0)
+                    {
+                        Progress1 = 0;
+                        return;
+                    }
+                    break;
+                case 1:
+                    if (--Progress2 < 0)
+                    {
+                        Progress2 = 0;
+                        return;
+                    }
+                    break;
+                case 2:
+                    if (--Progress3 < 0)
+                    {
+                        Progress3 = 0;
+                        return;
+                    }
+                    break;
+            }
+        }
+
+        public void AssignQuests()
+        {
+            Level lvl = Data.Singleton.Levels[Level - 1];
+
+            for(int i = 0; i < 3; ++i)
+            {
+                Random rnd = new Random();
+                float fRnd = (float)rnd.NextDouble();
+                if (fRnd < lvl.ChanceEasyQ)
+                {
+                    SetUserQuest(i, Data.Singleton.EasyQuests[
+                        rnd.Next(0, Data.Singleton.EasyQuests.Count)].QuestID);
+                }
+                else if(fRnd < lvl.ChanceEasyQ + lvl.ChanceMediumQ)
+                {
+                    SetUserQuest(i, Data.Singleton.MediumQuests[
+                        rnd.Next(0, Data.Singleton.MediumQuests.Count)].QuestID);
+                }
+                else if (fRnd < lvl.ChanceEasyQ + lvl.ChanceMediumQ + lvl.ChanceHardQ)
+                {
+                    SetUserQuest(i, Data.Singleton.HardQuests[
+                        rnd.Next(0, Data.Singleton.HardQuests.Count)].QuestID);
+                }
+                else if (fRnd < lvl.ChanceEasyQ + lvl.ChanceMediumQ + lvl.ChanceHardQ + lvl.ChanceLegendaryQ)
+                {
+                    SetUserQuest(i, Data.Singleton.LegendaryQuests[
+                        rnd.Next(0, Data.Singleton.LegendaryQuests.Count)].QuestID);
+                }
+            }
+        }
+
+        private void SetUserQuest(int nIndex, int nID)
+        {
+            switch (nIndex)
+            {
+                case 0:
+                    QuestID1 = nID;
+                    Progress1 = 0;
+                    break;
+                case 1:
+                    QuestID2 = nID;
+                    Progress2 = 0;
+                    break;
+                case 2:
+                    QuestID3 = nID;
+                    Progress3 = 0;
+                    break;
+            }
         }
 
         protected override string OnGetTableName() => TABLE_NAME;

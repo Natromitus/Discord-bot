@@ -14,7 +14,7 @@
         public int Amount { get; private set; }
         public string Name { get; private set; }
         public string Description { get; private set; }
-        public int Specification { get; private set; }
+        public ulong Specification { get; private set; }
         #endregion
 
         protected Quest()

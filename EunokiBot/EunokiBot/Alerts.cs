@@ -19,13 +19,11 @@ namespace EunokiBot
             if (userModel == null)
                 User.NewRecord(new User(user.Id));
 
-            var channel = Program.Singleton.Client.GetChannel(573131665660968972) as SocketTextChannel;
-            if (channel == null)
+            if (!(Program.Singleton.Client.GetChannel(573131665660968972) is SocketTextChannel channel))
                 return;
 
             await channel.SendMessageAsync(Utilities.GetAlert("WELCOME_&MENTION_&GUILDNAME", user.Mention, channel.Guild.Name));
-            SocketGuild guild = Program.Singleton.Client.GetGuild(573131665660968970) as SocketGuild;
-            if (guild == null)
+            if (!(Program.Singleton.Client.GetGuild(573131665660968970) is SocketGuild guild))
                 return;
 
             IRole role = channel.Guild.Roles.FirstOrDefault(obj => obj.Name.ToString() == "Level 1");
@@ -42,14 +40,13 @@ namespace EunokiBot
             if (user == null)
                 return;
 
-            SocketTextChannel channel = Program.Singleton.Client.GetChannel(573131665660968972) as SocketTextChannel;
-            if (channel == null)
+            if (!(Program.Singleton.Client.GetChannel(573131665660968972) is SocketTextChannel channel))
                 return;
 
             IRole role = channel.Guild.Roles.FirstOrDefault(obj => obj.Name.ToString() == $"Level {nLevel}");
             RemoveLevels(user, channel);
-            await user.AddRoleAsync(role);
 
+            _ = user.AddRoleAsync(role);
             _ = await channel.SendMessageAsync($"{user.Mention} has just reached {nLevel} level!");
         }
 
@@ -59,8 +56,7 @@ namespace EunokiBot
             if (user == null)
                 return;
 
-            SocketTextChannel channel = Program.Singleton.Client.GetChannel(603328120946163753) as SocketTextChannel;
-            if (channel == null)
+            if (!(Program.Singleton.Client.GetChannel(603328120946163753) is SocketTextChannel channel))
                 return;
 
             _ = await channel.SendMessageAsync($"{user.Mention} has {nWarnings} warnings!");

@@ -11,7 +11,6 @@ namespace EunokiBot.Items
             SocketCommandContext context, User user, Inventory inventory, object param = null)
         {
             user.XP += 250;
-            _ = context.Channel.SendMessageAsync("You have sucessfully used Small XP Capsule!");
         }
     }
 }

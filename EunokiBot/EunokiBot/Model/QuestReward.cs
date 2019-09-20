@@ -7,7 +7,7 @@ namespace EunokiBot.Model
     public class QuestReward : Root
     {
         #region Fields
-        public const string TABLE_NAME = "QuestAttributes";
+        public const string TABLE_NAME = "QuestsAttributes";
         public const string PRIMARY_KEY = "Difficulty";
         #endregion
 

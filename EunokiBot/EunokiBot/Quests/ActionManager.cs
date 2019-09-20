@@ -6,10 +6,6 @@ using System.Linq;
 using EunokiBot.Model;
 using System.Reflection;
 
-/*
-- ImageEndings as array and property using it with IEnumberable<string>
-*/
-
 namespace EunokiBot.Quests
 {
     public class ActionManager
@@ -39,21 +35,22 @@ namespace EunokiBot.Quests
         }
         #endregion
 
-        public void OnAction(User user, ActionParam action)
+        public void OnAction(User user, ActionParam action, bool bRemove = false)
         {
-            Quest[] arQuests = user.CurrentQuests.Select(obj => Data.Singleton.Quests.FirstOrDefault(obj2 => obj2.QuestID == obj.Key)).ToArray();
-            List<BaseQuest> arBaseQuests = new List<BaseQuest>();
+            Quest[] arUserQuests = user.CurrentQuests.Select(
+                obj => Data.Singleton.Quests.FirstOrDefault(
+                obj2 => obj2.QuestID == obj.Key)).ToArray();
 
-            foreach (Quest iter in arQuests.Where(obj => obj.Action == action.Action))
-            {
-                TypeInfo foundClass = QuestTypes.FirstOrDefault(obj => obj.GetCustomAttribute<ActionAttribute>().Action == iter.Action);
-                BaseQuest baseQuest = (BaseQuest)Activator.CreateInstance(foundClass);
-                baseQuest.QuestInfo = iter;
-                arBaseQuests.Add(baseQuest);
-            }
+            Quest quest = arUserQuests.FirstOrDefault(obj => obj.Action == action.Action);
+            if (quest == null)
+                return;
 
-            foreach(BaseQuest baseQuest in arBaseQuests)
-                baseQuest.Action(user, action.Parameter);
+            TypeInfo foundClass = QuestTypes.FirstOrDefault(
+                obj => obj.GetCustomAttribute<ActionAttribute>().Action == quest.Action);
+            BaseQuest baseQuest = (BaseQuest)Activator.CreateInstance(foundClass);
+            baseQuest.QuestInfo = quest;
+
+            baseQuest.Action(user, action.Parameter, bRemove);
         }
     }
 }

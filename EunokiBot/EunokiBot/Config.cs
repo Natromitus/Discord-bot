@@ -37,5 +37,9 @@ namespace EunokiBot
     {
         public string token;
         public string cmdPrefix;
+        public string reactGender;
+        public string reactHome;
+        public string reactZodiac;
+        public string reactMBTI;
     }
 }

@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Linq;
 
 using Dapper;
 
@@ -325,7 +324,7 @@ namespace EunokiBot.Model
                 if (nAmount > nTemp)
                 {
                     SetItemAt(pos, nID, item.MaxStack);
-                    nAmount = nAmount - nTemp;
+                    nAmount -= nTemp;
                 }
                 else
                 {

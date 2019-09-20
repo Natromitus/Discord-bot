@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Linq;
 
 using Discord;
-using Discord.WebSocket;
+using Discord.WebSocket; 
 using Discord.Commands;
 
 using EunokiBot.Model;
@@ -40,7 +40,10 @@ namespace EunokiBot
             _client = new DiscordSocketClient(new DiscordSocketConfig
             { LogLevel = LogSeverity.Verbose });
 
-            _client.Log += Log;
+            _client.Log += LogAsync;
+            _client.ReactionAdded += ReactManager.Singleton.ReactionAddedAsync;
+            _client.ReactionRemoved += ReactManager.Singleton.ReactionRemovedAsync;
+
             await _client.LoginAsync(TokenType.Bot, Config.Bot.token);
             await _client.StartAsync();
 
@@ -53,7 +56,7 @@ namespace EunokiBot
             await Task.Delay(-1);
         }
 
-        private async Task Log(LogMessage sMsg)
+        private async Task LogAsync(LogMessage sMsg)
         {
             Console.WriteLine(sMsg.Message);
             if(sMsg.Exception != null)
