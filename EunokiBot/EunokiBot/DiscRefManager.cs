@@ -1,0 +1,42 @@
+﻿using Discord.WebSocket;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace EunokiBot
+{
+    public class DiscRefManager
+    {
+        private static readonly DiscRefManager m_singleton = new DiscRefManager();
+
+        private SocketGuild m_guild = null;
+        private SocketTextChannel m_channelMain = null;
+
+        public static DiscRefManager Singleton => m_singleton;
+
+        public SocketGuild Guild
+        {
+            get
+            {
+                if (m_guild == null)
+                    m_guild = Program.Singleton.Client.GetGuild(Convert.ToUInt64(Config.Bot.guild));
+
+                return m_guild;
+            }
+        }
+
+        public SocketTextChannel ChannelMain
+        {
+            get
+            {
+                if (m_channelMain == null)
+                    m_channelMain = Program.Singleton.Client.GetChannel(Convert.ToUInt64(Config.Bot.channelMain)) as SocketTextChannel;
+
+                return m_channelMain;
+            }
+        }
+
+
+
+    }
+}

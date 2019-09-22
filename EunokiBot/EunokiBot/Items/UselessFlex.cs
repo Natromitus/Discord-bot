@@ -14,7 +14,8 @@ namespace EunokiBot.Items
         protected override void OnItemUse(
             SocketCommandContext context, User user, Inventory inventory, object param = null)
         {
-
+            _ = DiscRefManager.Singleton.ChannelMain.SendMessageAsync(Utilities.GetAlert(
+                "FLEX_&MENTION", Program.Singleton.Client.GetUser(user.UserID).Mention));
         }
     }
 }

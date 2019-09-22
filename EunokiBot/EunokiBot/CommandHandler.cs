@@ -58,9 +58,56 @@ namespace EunokiBot
             if (sMessage.HasStringPrefix(Config.Bot.cmdPrefix, ref nArsPos) ||
                 sMessage.HasMentionPrefix(_client.CurrentUser, ref nArsPos))
             {
-                IResult result = await _service.ExecuteAsync(context, nArsPos, services: null);
-                if(!result.IsSuccess && result.Error == CommandError.UnknownCommand)
-                    Console.WriteLine(result.ErrorReason);
+                if (context.Message.Content.Contains("grab"))
+                    Grab(context);
+
+                if (sMessage.Channel.Id == Convert.ToUInt64(Config.Bot.channelBotCommands) ||
+                    sMessage.Channel.GetType() == typeof(SocketDMChannel))
+                {
+                    IResult result = await _service.ExecuteAsync(context, nArsPos, services: null);
+                    if (!result.IsSuccess && result.Error == CommandError.UnknownCommand)
+                        Console.WriteLine(result.ErrorReason);
+                }
+            }
+        }
+
+        private void Grab(SocketCommandContext context)
+        {
+            
+            string sCommand = context.Message.Content.Substring(1);
+
+            if (sCommand == "grab cake")
+            {
+                if (Data.Singleton.Cakes <= 0)
+                    return;
+
+                User user = User.Get(context.User.Id);
+
+                Random rnd = new Random();
+                float fRnd = (float)rnd.NextDouble();
+
+                if (fRnd < 0.5f)
+                {
+                    user.XP += 250;
+                    --Data.Singleton.Cakes;
+                    Program.Singleton.AlertsHandler.CakeGrab(context.User.Id, false);
+                }
+                else
+                {
+                    user.XP -= 250;
+                    --Data.Singleton.Cakes;
+                    Program.Singleton.AlertsHandler.CakeGrab(context.User.Id, true);
+                }
+            }
+            else if(sCommand == "grab gum")
+            {
+                if (Data.Singleton.Gums <= 0)
+                    return;
+
+                User user = User.Get(context.User.Id);
+                user.XP += 83;
+                --Data.Singleton.Gums;
+                Program.Singleton.AlertsHandler.GumGrab(context.User.Id);
             }
         }
     }

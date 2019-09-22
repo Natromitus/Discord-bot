@@ -70,6 +70,12 @@ namespace EunokiBot.Model
             get { return m_nXP; }
             set
             {
+                if(value < 0)
+                {
+                    if ((m_nXP - value) < 0)
+                        value = 0;
+                }
+
                 if (!SetField(ref m_nXP, value))
                     return;
 

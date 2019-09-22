@@ -37,6 +37,11 @@ namespace EunokiBot
     {
         public string token;
         public string cmdPrefix;
+
+        public string guild;
+        public string channelMain;
+        public string channelBotCommands;
+
         public string reactGender;
         public string reactHome;
         public string reactZodiac;

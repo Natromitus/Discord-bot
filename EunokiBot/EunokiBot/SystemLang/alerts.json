@@ -1,5 +1,14 @@
 {
   "WELCOME_&MENTION_&GUILDNAME": "Welcome {0} to {1}!",
   "SECRET_&NUMBER": "SECRET IS {0}",
-  "JOINDM_&NAME": "Hello {0}!\nPlease read our rules & info."
+  "JOINDM_&NAME": "Hello {0}!\nPlease read our rules & info.",
+  "LEVELUP_&MENTION_&LEVEL": "{0} has just reached {1} level!",
+  "LEVELUPDM_&LEVEL": "Congratulations on reaching level {0}! Keep up the good work.",
+  "CAKEDROP_&MENTION": "{0} has just took out a cake! Type '$grab cake' to take it!",
+  "GUMDROP_&MENTION": "{0} has just opened out gum pack! Type '$grab gum' to take it!",
+  "GUMGRAB_&MENTION_&AMOUNTLEFT": "{0} just grabbed a gum! Gums left: {1}",
+  "CAKEGRAB_&MENTION_&AMOUNTLEFT": "{0} just grabbed a cake! Cakes left: {1}",
+  "CAKELIE_&MENTION_&AMOUNTLEFT": "{0} fell for a lie! Cakes left: {1}",
+  "MINIGUN_&MENTION": "{0} just pulled something from his pocket! Watch out!",
+  "FLEX_&MENTION": "{0} just flexed on all of you! Yes, he is that kind of person."
 }

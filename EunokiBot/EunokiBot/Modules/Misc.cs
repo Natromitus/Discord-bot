@@ -30,7 +30,6 @@ namespace EunokiBot.Modules
 
             string sFilePath = ImageManager.Singleton.FilePath;
             EmbedBuilder embedIG = new EmbedBuilder();
-            embedIG.WithImageUrl(imgurl);
         }
 
         [Command("register")]

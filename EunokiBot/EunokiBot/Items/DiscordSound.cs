@@ -14,7 +14,7 @@ namespace EunokiBot.Items
         protected override void OnItemUse(
             SocketCommandContext context, User user, Inventory inventory, object param = null)
         {
-
+            // TODO: AFTER AUDIO UPDATE
         }
     }
 }

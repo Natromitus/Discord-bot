@@ -32,6 +32,10 @@ namespace EunokiBot.Model
         #region Properties
         public static Data Singleton => m_singleton;
 
+        public int Cakes { get; set; }
+
+        public int Gums { get; set; }
+
         public int ShopPages
         {
             get

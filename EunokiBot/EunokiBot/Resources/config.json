@@ -1,8 +1,11 @@
 {
   "token": "MzQ1MzY2NzgzMTI2OTI5NDEx.XVKiTA.oFaeFP4zmJuD15P0miSypCZKH8Q",
   "cmdPrefix": "$",
-  "reactGender": "624014037860220959",
-  "reactHome": "624014044319318029",
-  "reactZodiac": "624014056331935761",
-  "reactMBTI": "624014080293863424"
+  "guild": "573131665660968970",
+  "channelMain": "573131665660968972",
+  "channelBotCommands": "600466245783126029",
+  "reactGender": "625056036134322186",
+  "reactHome": "625056085388034050",
+  "reactZodiac": "625056103494975518",
+  "reactMBTI": "625056149875589143"
 }
