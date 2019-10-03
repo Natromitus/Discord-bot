@@ -289,7 +289,7 @@ namespace EunokiBot.Model
                     return m_nItemID7;
                 case 7:
                     return m_nItemID8;
-                default:
+                default: 
                     return 0;
             }
         }

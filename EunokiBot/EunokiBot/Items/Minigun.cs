@@ -14,8 +14,6 @@ namespace EunokiBot.Items
         protected override void OnItemUse(
             SocketCommandContext context, User user, Inventory inventory, object param = null)
         {
-            Program.Singleton.AlertsHandler.Minigun(context.User.Id);
-
             SocketTextChannel channel = DiscRefManager.Singleton.ChannelMain;
             _ = channel.SendMessageAsync(Utilities.GetAlert(
                 "MINIGUN_&MENTION", Program.Singleton.Client.GetUser(user.UserID).Mention));

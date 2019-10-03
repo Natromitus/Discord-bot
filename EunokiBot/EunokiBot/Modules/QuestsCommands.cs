@@ -22,8 +22,7 @@ namespace EunokiBot.Modules
             if (user == null)
                 return;
 
-            if (!(Context.Guild.GetChannel(606567031730601985) is SocketTextChannel channel))
-                return;
+            SocketTextChannel channel = DiscRefManager.Singleton.ChannelMain;
 
             string sImageFileName = ImageManager.Singleton.QuestsInfo(user);
             if (sImageFileName == string.Empty)

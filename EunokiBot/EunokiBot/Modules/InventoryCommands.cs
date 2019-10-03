@@ -27,6 +27,8 @@ namespace EunokiBot.Modules
             IUser targetUser = null;
             if (!string.IsNullOrWhiteSpace(sParam))
             {
+                string sMentionParam = "<@!" + sParam.Substring(2); 
+
                 if (Context.Guild.Users.Any(obj => obj.Username == sParam))
                     targetUser = Context.Guild.Users.First(obj => obj.Username == sParam);
                 else if (ulong.TryParse(sParam, out ulong targetUserId))
@@ -34,8 +36,8 @@ namespace EunokiBot.Modules
                     if (Context.Guild.Users.Any(obj => obj.Id == targetUserId))
                         targetUser = Context.Guild.Users.First(obj => obj.Id == targetUserId);
                 }
-                else if (Context.Guild.Users.Any(obj => obj.Mention == sParam))
-                    targetUser = Context.Guild.Users.First(obj => obj.Mention == sParam);
+                else if (Context.Guild.Users.Any(obj => obj.Mention == sMentionParam))
+                    targetUser = Context.Guild.Users.First(obj => obj.Mention == sMentionParam);
             }
 
             if (nIndex == 0)

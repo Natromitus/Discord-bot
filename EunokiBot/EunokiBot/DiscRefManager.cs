@@ -11,6 +11,7 @@ namespace EunokiBot
 
         private SocketGuild m_guild = null;
         private SocketTextChannel m_channelMain = null;
+        private SocketTextChannel m_channelSuggestions = null;
 
         public static DiscRefManager Singleton => m_singleton;
 
@@ -36,6 +37,16 @@ namespace EunokiBot
             }
         }
 
+        public SocketTextChannel ChannelSuggestions
+        {
+            get
+            {
+                if (m_channelSuggestions == null)
+                    m_channelSuggestions = Program.Singleton.Client.GetChannel(Convert.ToUInt64(Config.Bot.channelSuggestions)) as SocketTextChannel;
+
+                return m_channelSuggestions;
+            }
+        }
 
 
     }

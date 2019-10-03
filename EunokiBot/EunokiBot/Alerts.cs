@@ -53,12 +53,6 @@ namespace EunokiBot
             }
         }
 
-        public void Minigun(ulong ulUserID)
-        {
-            _ = DiscRefManager.Singleton.ChannelMain.SendMessageAsync(Utilities.GetAlert(
-                "CAKEDROP_&MENTION", Program.Singleton.Client.GetUser(ulUserID).Mention));
-        }
-
         public void GumGrab(ulong ulUserID)
         {
             _ = DiscRefManager.Singleton.ChannelMain.SendMessageAsync(Utilities.GetAlert(

@@ -61,6 +61,14 @@ namespace EunokiBot.ImageManagment
             }
         }
 
+        public string[] RicardoFiles
+        {
+            get
+            {
+                return Directory.GetFiles(Path.Combine(FilePath, "Ricardo"));
+            }
+        }
+
         private PrivateFontCollection FontCollection
         {
             get

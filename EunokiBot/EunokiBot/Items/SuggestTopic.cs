@@ -14,7 +14,8 @@ namespace EunokiBot.Items
         protected override void OnItemUse(
             SocketCommandContext context, User user, Inventory inventory, object param = null)
         {
-
+            string sMention = context.Guild.GetUser(user.UserID).Mention;
+            _ = DiscRefManager.Singleton.ChannelSuggestions.SendMessageAsync(sMention + ": " + param.ToString());
         }
     }
 }
