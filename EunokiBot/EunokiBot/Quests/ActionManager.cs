@@ -18,39 +18,68 @@ namespace EunokiBot.Quests
 
         #region Properties
         public static ActionManager Singleton => m_singleton;
-
-        private IEnumerable<TypeInfo> QuestTypes
-        {
-            get
-            {
-                if (m_arQuestTypes == null)
-                {
-                    Assembly assy = Assembly.GetEntryAssembly();
-                    m_arQuestTypes = assy.DefinedTypes.Where(
-                        obj => typeof(BaseQuest).IsAssignableFrom(obj) && obj.GetCustomAttribute<ActionAttribute>() != null).ToList();
-                }
-
-                return m_arQuestTypes;
-            }
-        }
         #endregion
 
         public void OnAction(User user, ActionParam action, bool bRemove = false)
         {
-            Quest[] arUserQuests = user.CurrentQuests.Select(
-                obj => Data.Singleton.Quests.FirstOrDefault(
+            // Get User's Quests
+            Quest[] arUserQuests = user.CurrentQuests.Select(obj => Data.Singleton.Quests.FirstOrDefault(
                 obj2 => obj2.QuestID == obj.Key)).ToArray();
 
-            Quest quest = arUserQuests.FirstOrDefault(obj => obj.Action == action.Action);
-            if (quest == null)
+            // Find quests that have same specification first or without specification
+            List<Quest> quests = arUserQuests.Where(obj => obj.Action == action.Action).Where(
+                obj => obj.Specification == action.Parameter || obj.Specification == 0).ToList();
+
+            if (quests.Count == 0)
                 return;
 
-            TypeInfo foundClass = QuestTypes.FirstOrDefault(
-                obj => obj.GetCustomAttribute<ActionAttribute>().Action == quest.Action);
-            BaseQuest baseQuest = (BaseQuest)Activator.CreateInstance(foundClass);
-            baseQuest.QuestInfo = quest;
+            foreach(Quest quest in quests)
+                Progress(user, quest, bRemove);
+        }
 
-            baseQuest.Action(user, action.Parameter, bRemove);
+        private void Progress(User user, Quest quest, bool bRemove)
+        {
+            List<int> arCurrentQuestsID = user.CurrentQuests.ToArray().Select(
+                obj => obj.Key).ToList();
+            List<int> arSelectedQuestsID = arCurrentQuestsID.Where(
+                obj => obj == quest.QuestID).ToList();
+
+            List<int> arSelectedIndex = new List<int>();
+            int nStartPos = 0;
+            foreach (int iter in arSelectedQuestsID)
+            {
+                int nFound = arCurrentQuestsID.IndexOf(iter, nStartPos);
+                arSelectedIndex.Add(nFound);
+                nStartPos = nFound + 1;
+            }
+
+            if (bRemove)
+            {
+                foreach (int iter in arSelectedIndex)
+                    user.RemoveProgressOnIndex(iter);
+
+                return;
+            }
+
+            foreach (int iter in arSelectedIndex)
+            {
+                if (user.AddProgressOnIndex(iter, quest.Amount))
+                {
+                    QuestReward reward = QuestReward.GetRewardByDifficulty(quest.Difficulty);
+                    user.XP += reward.XP;
+
+                    float fRnd1 = (float)new Random().NextDouble();
+                    if (fRnd1 < reward.ChanceGold)
+                        user.Money += reward.Gold;
+
+                    float fRnd2 = (float)new Random().NextDouble();
+                    if (fRnd2 < reward.MBoxChance)
+                    {
+                        Inventory inventory = new Inventory(user.UserID);
+                        inventory.AddItem(17, 1);
+                    }
+                }
+            }
         }
     }
 }

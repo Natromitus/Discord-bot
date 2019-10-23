@@ -16,8 +16,8 @@ namespace EunokiBot.Model
         private int m_nXP;
         private int m_nMoney;
         private int m_nQuests;
-        private int m_nWins;
-        private int m_nLost;
+        private int m_nReroll;
+        private string m_nJoinedDate;
         private int m_nQuestID1;
         private int m_nQuestID2;
         private int m_nQuestID3;
@@ -102,21 +102,21 @@ namespace EunokiBot.Model
             }
         }
 
-        public int Wins
+        public int Reroll
         {
-            get { return m_nWins; }
+            get { return m_nReroll; }
             set
             {
-                SetField(ref m_nWins, value);
+                SetField(ref m_nReroll, value);
             }
         }
 
-        public int Lost
+        public string JoinedDate
         {
-            get { return m_nLost; }
+            get { return m_nJoinedDate; }
             set
             {
-                SetField(ref m_nLost, value);
+                SetField(ref m_nJoinedDate, value);
             }
         }
 
@@ -203,7 +203,8 @@ namespace EunokiBot.Model
             {
                 UserID = id;
                 Level = 1;
-                Warnings = Messages = XP = Money = Quests = Wins = Lost = 0;
+                Warnings = Messages = XP = Money = Quests = Reroll = 0;
+                JoinedDate = DateTime.Now.ToString("d. MM. yyyy");
                 AssignQuests();
             }
         }
@@ -225,9 +226,9 @@ namespace EunokiBot.Model
         public static void NewRecord(User user)
         {
            SQL.Singleton.Connection.Execute($"INSERT INTO {TABLE_NAME}" +
-                $" ({PRIMARY_KEY}, Warnings, Messages, Level, XP, Money, Quests, Wins, Lost," +
+                $" ({PRIMARY_KEY}, Warnings, Messages, Level, XP, Money, Quests, Reroll, JoinedDate," +
                 $" QuestID1, Progress1, QuestID2, Progress2, QuestID3, Progress3)" +
-                $" VALUES (@{PRIMARY_KEY}, @Warnings, @Messages, @Level, @XP, @Money, @Quests, @Wins, @Lost," +
+                $" VALUES (@{PRIMARY_KEY}, @Warnings, @Messages, @Level, @XP, @Money, @Quests, @Reroll, @JoinedDate," +
                 $" @QuestID1, @Progress1, @QuestID2, @Progress2, @QuestID3, @Progress3)", user);
         }
 

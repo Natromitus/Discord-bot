@@ -38,15 +38,13 @@ namespace EunokiBot.ImageManagment
         };
 
 
-    private readonly Color m_clrUserInfoBG = Color.FromArgb(251, 251, 251);
+        private readonly Color m_clrUserInfoBG = Color.FromArgb(251, 251, 251);
         private readonly int m_nMargin = 25;
         private readonly int m_nAvatar = 150;
-        private readonly int m_nLevelBG = 50;
         private readonly int m_nIconX1 = 42;
         private readonly int m_nIconX2 = 122;
         private readonly int m_nIconY1 = 235;
         private readonly int m_nIconY2 = 300;
-        private readonly int m_nIconY3 = 365;
 
         #endregion
 
@@ -113,8 +111,13 @@ namespace EunokiBot.ImageManagment
                         g.DrawImage(Icons[1], m_nIconX2, m_nIconY1);
                         g.DrawImage(Icons[2], m_nIconX1, m_nIconY2);
                         g.DrawImage(Icons[3], m_nIconX2, m_nIconY2);
-                        g.DrawImage(Icons[4], m_nIconX1, m_nIconY3);
-                        g.DrawImage(Icons[5], m_nIconX2, m_nIconY3);
+
+                        using (SolidBrush b = new SolidBrush(Color.FromArgb(90, 130, 190)))
+                        using (Font f = new Font(FontCollection.Families[0], 12, FontStyle.Regular))
+                        {
+                            g.FillRectangle(b, new Rectangle(30, 373, 5, 36));
+                            g.DrawString("Joined Date", f, b, new RectangleF(40, 370, 110, 17.5f));
+                        }
 
                         using (Pen p = new Pen(Color.FromArgb(90, 130, 190)))
                             g.DrawLine(p, m_nAvatar + m_nMargin + 17, m_nMargin,
@@ -304,37 +307,26 @@ namespace EunokiBot.ImageManagment
                     g.DrawString(sMessages, f, b, new RectangleF(100, 270, 75, 17.5f), sf);
                     #endregion
 
-                    #region Duels
-                    #region Wins
-                    string sWins = String.Empty;
-                    if (user.Wins >= 100000)
-                        sWins = "+99999";
-                    else
-                        sWins = user.Wins.ToString();
-                    g.DrawString(sWins, f, b, new RectangleF(20, 335, 75, 17.5f), sf);
-                    #endregion
-                    #region Lost
-                    string sLost = String.Empty;
-                    if (user.Lost >= 100000)
-                        sLost = "+99999";
-                    else
-                        sLost = user.Lost.ToString();
-                    g.DrawString(sLost, f, b, new RectangleF(100, 335, 75, 17.5f), sf);
-                    #endregion
-                    #endregion
-
                     #region Quests
                     string sQuests = String.Empty;
                     if (user.Quests >= 100000)
                         sQuests = "+99999";
                     else
                         sQuests = user.Quests.ToString();
-                    g.DrawString(sQuests, f, b, new RectangleF(20, 400, 75, 17.5f), sf);
+                    g.DrawString(sQuests, f, b, new RectangleF(20, 335, 75, 17.5f), sf);
                     #endregion
 
                     #region Warnings
-                    g.DrawString(user.Warnings.ToString(), f, b, new RectangleF(100, 400, 75, 17.5f), sf);
+                    g.DrawString(user.Warnings.ToString(), f, b, new RectangleF(100, 335, 75, 17.5f), sf);
                     #endregion
+
+                    #region JoinedDate
+                    if (user.JoinedDate == String.Empty)
+                        user.JoinedDate = DateTime.Now.ToString("d. MM. yyyy");
+
+                    g.DrawString(user.JoinedDate, f, b, new RectangleF(40, 390, 160, 17.5f));
+                    #endregion
+
                 }
                 #endregion
             }
@@ -345,8 +337,13 @@ namespace EunokiBot.ImageManagment
 
         public string Shop(int nPage)
         {
-            ShopDefault[nPage - 1].Save(Path.Combine(FilePath, "shop.png"), ImageFormat.Png);
-            return "shop.png";
+            string sShop = $"shop{nPage}.png";
+
+            if (File.Exists(Path.Combine(FilePath, sShop)))
+                return sShop;
+
+            ShopDefault[nPage - 1].Save(Path.Combine(FilePath, $"shop{nPage}.png"), ImageFormat.Png);
+            return sShop;
         }
 
         public string QuestsInfo(User user)
@@ -380,6 +377,50 @@ namespace EunokiBot.ImageManagment
             return user.UserID + "Quests.png";
         }
 
+        public string ItemDesc(int nID)
+        {
+            Bitmap result = new Bitmap(400, 120); 
+
+            Item item = Item.GetItemByID(nID);
+            if (item == null)
+                return String.Empty;
+
+            using (Graphics g = Graphics.FromImage(result))
+            using (StringFormat sf = new StringFormat())
+            using (SolidBrush b = new SolidBrush(Color.Black))
+            {
+                g.Clear(m_clrUserInfoBG);
+
+                // Item Image
+                g.DrawImage(SlotDefault, 15, 15);
+                g.DrawImage(Items[nID - 1], 15, 15);
+
+                // Item Name
+                using (Font f = new Font(FontCollection.Families[0], 12, FontStyle.Bold))
+                    g.DrawString(item.Name, f, b, new Rectangle(118, 15, 250, 80), sf);
+
+                using (Pen p = new Pen(Color.Black))
+                    g.DrawLine(p, new Point(120, 35), new Point(285, 35));
+
+                // ItemID
+                using (Font f = new Font(FontCollection.Families[0], 10, FontStyle.Regular))
+                    g.DrawString("ID: " + item.ItemID, f, b, new Rectangle(118, 41, 300, 80), sf);
+
+                // Price
+                g.DrawImage(Icons[0], 210, 38, 20, 20);
+
+                using (Font f = new Font(FontCollection.Families[0], 10, FontStyle.Regular))
+                    g.DrawString(item.Price.ToString(), f, b, new Rectangle(228, 41, 200, 80), sf);
+
+                // Item Description
+                using (Font f = new Font(FontCollection.Families[0], 10, FontStyle.Regular))
+                    g.DrawString(item.Description, f, b, new Rectangle(118, 60, 300, 80), sf);
+            }
+
+            result.Save(Path.Combine(FilePath, "Item" + nID + ".png"), ImageFormat.Png);
+            return "Item" + nID + ".png";
+        }
+
         private Bitmap QuestPanel(int nIndex, User user)
         {
             Quest quest = Data.Singleton.Quests.FirstOrDefault(
@@ -397,7 +438,7 @@ namespace EunokiBot.ImageManagment
 
                 if (quest.QuestID == 0)
                 {
-                    g.DrawImage(Icons[7], 30, 23);
+                    g.DrawImage(Icons[5], 30, 23);
 
                     // Text
                     using (Font f = new Font(FontCollection.Families[0], 12, FontStyle.Bold))
@@ -419,7 +460,7 @@ namespace EunokiBot.ImageManagment
                 using (SolidBrush b3 = new SolidBrush(m_clrUserInfoBG))
                     g.FillEllipse(b3, new Rectangle(20, 13, 50, 50));
 
-                g.DrawImage(Icons[6], 30, 23);
+                g.DrawImage(Icons[4], 30, 23);
 
                 // Text
                 using (Font f = new Font(FontCollection.Families[0], 12, FontStyle.Bold))
@@ -533,7 +574,7 @@ namespace EunokiBot.ImageManagment
         {
             List<Bitmap> arItems = new List<Bitmap>();
 
-            for (int i = (nPage - 1)* 12; i < nPage * 12; ++i)
+            for (int i = (nPage - 1) * 12; i < nPage * 12; ++i)
             {
                 Bitmap source2 = new Bitmap(90, 90);
 
@@ -552,6 +593,7 @@ namespace EunokiBot.ImageManagment
 
                         int nPrice = Data.Singleton.Items[i].Price;
                         g.DrawString(nPrice.ToString(), f, b, new Rectangle(15, 65, 55, 18), sf);
+                        g.DrawString((i + 1).ToString(), f, b, new Rectangle(2, 2, 30, 18));
                     }
                 }
 

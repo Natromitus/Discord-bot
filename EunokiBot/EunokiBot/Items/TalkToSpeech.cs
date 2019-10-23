@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-
-using Discord;
-using Discord.Commands;
+﻿using Discord.Commands;
 
 using EunokiBot.Model;
 
 namespace EunokiBot.Items
 {
-    [ItemID(31)]
+    [ItemID(18)]
     public class TalkToSpeech : BaseItem
     {
         protected override void OnItemUse(

@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-
-using Discord;
-using Discord.Commands;
+﻿using Discord.Commands;
 using Discord.WebSocket;
+
 using EunokiBot.Model;
 
 namespace EunokiBot.Items
 {
-    [ItemID(21)]
+    [ItemID(15)]
     public class Minigun : BaseItem
     {
         protected override void OnItemUse(

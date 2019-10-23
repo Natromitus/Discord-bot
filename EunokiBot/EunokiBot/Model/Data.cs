@@ -166,7 +166,6 @@ namespace EunokiBot.Model
         }
 
         public IEnumerable<string> ImageEndings => m_arImageEndings;
-
         #endregion
     }
 }

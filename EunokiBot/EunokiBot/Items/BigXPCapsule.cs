@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-
-using Discord;
-using Discord.Commands;
+﻿using Discord.Commands;
 
 using EunokiBot.Model;
 
 namespace EunokiBot.Items
 {
-    [ItemID(16)]
+    [ItemID(12)]
     public class BigXPCapsule : BaseItem
     {
         protected override void OnItemUse(

@@ -15,7 +15,7 @@ namespace EunokiBot
 {
     public class Shop
     {
-        [Group("shop"), Summary("Group managing shop commands.")]
+        [Group("shop"), Alias("item", "items", "itm", "shp", "market"), Summary("Group managing shop commands.")]
         public class ShopGroup : ModuleBase<SocketCommandContext>
         {
             [Command(""), Alias("show"), Summary("Display shop items.")]
@@ -32,25 +32,12 @@ namespace EunokiBot
                     return;
                 }
 
-                if (!(Context.Guild.GetChannel(606567031730601985) is SocketTextChannel channel))
-                    return;
-
                 string sImageFileName = ImageManager.Singleton.Shop(nPage);
                 if (sImageFileName == string.Empty)
                     return;
 
-                RestUserMessage picture = await channel.SendFileAsync(
+                Context.Channel.SendFileAsync(
                     Path.Combine(ImageManager.Singleton.FilePath, sImageFileName), string.Empty);
-                string imgurl = picture.Attachments.First().Url;
-
-                EmbedBuilder embed = new EmbedBuilder();
-                embed.WithImageUrl(imgurl);
-
-                File.Delete(Path.Combine(ImageManager.Singleton.FilePath, sImageFileName));
-
-                await Context.Channel.SendMessageAsync("", false, embed.Build());
-                await Task.Delay(500);
-                _ = picture.DeleteAsync();
             }
 
             [Command("buy"), Alias("purchase"), Summary("Buy item from shop.")]
@@ -60,14 +47,13 @@ namespace EunokiBot
                 if (user == null)
                     return;
 
-                int nCount = SQL.Singleton.GetCount("Items");
-                if (nID <= 0 && nID >= nCount)
+                if (nID <= 0 && nID >= Data.Singleton.Items.Count)
                 {
                     _ = await Context.Channel.SendMessageAsync(":x: You didn't specify valid id of an item.");
                     return;
                 }
 
-                if(nAmount == 0)
+                if (nAmount == 0)
                 {
                     _ = await Context.Channel.SendMessageAsync(":x: You didn't specify valid amount of items you want to purchase.");
                     return;
@@ -93,6 +79,25 @@ namespace EunokiBot
 
                 _ = await Context.Channel.SendMessageAsync(":tada: Item was sucessfully bought!");
                 user.Money -= item.Price * (nAmount - nResult);
+            }
+
+            [Command("info"), Alias("desc", "description", "detail"), Summary("Information about item.")]
+            public async Task Info(int nID = -1)
+            {
+                if(nID < 0 || nID > Data.Singleton.Items.Count)
+                {
+                    _ = await Context.Channel.SendMessageAsync(":x: Invalid Item ID");
+                    return;
+                }
+
+                string sImageFileName = ImageManager.Singleton.ItemDesc(nID);
+                if (sImageFileName == string.Empty)
+                    return;
+
+                RestUserMessage picture = await Context.Channel.SendFileAsync(
+                    Path.Combine(ImageManager.Singleton.FilePath, sImageFileName), string.Empty);
+
+                File.Delete(Path.Combine(ImageManager.Singleton.FilePath, sImageFileName));
             }
         }
     }

@@ -10,11 +10,60 @@ namespace EunokiBot
     class Utilities
     {
         private static Dictionary<string, string> m_arAlerts;
+        private static List<string> m_arCringe = null;
+        private static List<string> m_arPuns = null;
+        private static List<string> m_arFacts = null;
+
+        public static List<string> Cringe
+        {
+            get
+            {
+                if (m_arCringe == null)
+                {
+                    string sJson = File.ReadAllText("Resources/cringe.json");
+                    dynamic data = JsonConvert.DeserializeObject<dynamic>(sJson);
+                    m_arCringe = data.ToObject<Dictionary<string, string>>().Values.ToList();
+                }
+
+                return m_arCringe;
+            }
+        }
+
+        public static List<string> Puns
+        {
+            get
+            {
+                if (m_arPuns == null)
+                {
+                    string sJson = File.ReadAllText("Resources/puns.json");
+                    dynamic data = JsonConvert.DeserializeObject<dynamic>(sJson);
+                    m_arPuns = data.ToObject<Dictionary<string, string>>().Values.ToList();
+                }
+
+                return m_arPuns;
+            }
+        }
+
+
+        public static List<string> Facts
+        {
+            get
+            {
+                if (m_arFacts == null)
+                {
+                    string sJson = File.ReadAllText("Resources/facts.json");
+                    dynamic data = JsonConvert.DeserializeObject<dynamic>(sJson);
+                    m_arFacts = data.ToObject<Dictionary<string, string>>().Values.ToList();
+                }
+
+                return m_arFacts;
+            }
+        }
 
         static Utilities()
         {
             string sJson = File.ReadAllText("SystemLang/alerts.json");
-            var data = JsonConvert.DeserializeObject<dynamic>(sJson);
+            dynamic data = JsonConvert.DeserializeObject<dynamic>(sJson);
             m_arAlerts = data.ToObject<Dictionary<string, string>>();
         }   
 

@@ -6,9 +6,6 @@ namespace EunokiBot.Items
     {
         public int ID { get; set; }
 
-        public ItemIDAttribute(int id)
-        {
-            ID = id;
-        }
+        public ItemIDAttribute(int id) => ID = id;
     }
 }

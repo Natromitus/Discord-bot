@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using Discord;
 using Discord.Commands;
 using EunokiBot.ImageManagment;
 using EunokiBot.Model;
 
 namespace EunokiBot.Items
 {
-    [ItemID(12)]
+    [ItemID(10)]
     public class RicardoTime : BaseItem
     {
         protected override void OnItemUse(

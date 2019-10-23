@@ -42,6 +42,8 @@ namespace EunokiBot
         public string channelMain;
         public string channelBotCommands;
         public string channelSuggestions;
+        public string channelForFun;
+
         public string reactGender;
         public string reactHome;
         public string reactZodiac;

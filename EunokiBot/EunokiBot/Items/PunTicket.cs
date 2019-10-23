@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-
-using Discord;
-using Discord.Commands;
+﻿using Discord.Commands;
 
 using EunokiBot.Model;
+using System;
 
 namespace EunokiBot.Items
 {
@@ -14,7 +11,8 @@ namespace EunokiBot.Items
         protected override void OnItemUse(
             SocketCommandContext context, User user, Inventory inventory, object param = null)
         {
-            // TODO: PUN UPDATE
+            Random rand = new Random();
+            DiscRefManager.Singleton.ChannelForFun.SendMessageAsync(Utilities.Puns[rand.Next(100)]);
         }
     }
 }
