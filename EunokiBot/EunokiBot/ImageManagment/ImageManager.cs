@@ -421,6 +421,83 @@ namespace EunokiBot.ImageManagment
             return "Item" + nID + ".png";
         }
 
+        public string ItemBought(int nID, int nAmount)
+        {
+            Bitmap result = new Bitmap(350, 120);
+
+            Item item = Item.GetItemByID(nID);
+            if (item == null)
+                return String.Empty;
+
+            using (Graphics g = Graphics.FromImage(result))
+            using (StringFormat sf = new StringFormat())
+            using (SolidBrush b = new SolidBrush(Color.Black))
+            {
+                g.Clear(m_clrUserInfoBG);
+
+                // Item Image
+                g.DrawImage(SlotDefault, 15, 15);
+                g.DrawImage(Items[nID - 1], 15, 15);
+
+                // Item Name
+                using (Font f = new Font(FontCollection.Families[0], 12, FontStyle.Bold))
+                    g.DrawString(item.Name, f, b, new Rectangle(118, 15, 250, 80), sf);
+
+                // ItemID
+                using (Font f = new Font(FontCollection.Families[0], 10, FontStyle.Regular))
+                    g.DrawString("ID: " + item.ItemID, f, b, new Rectangle(118, 41, 300, 80), sf);
+
+                using (Font f = new Font(FontCollection.Families[0], 10, FontStyle.Regular))
+                    g.DrawString("Item(s) successfully bought!", f, b, new Rectangle(118, 60, 300, 80), sf);
+
+                // Price
+                g.DrawImage(Icons[0], 210, 38, 20, 20);
+                using (Font f = new Font(FontCollection.Families[0], 10, FontStyle.Regular))
+                    g.DrawString("-" + (item.Price * nAmount).ToString(), f, b, new Rectangle(228, 41, 200, 80), sf);
+
+                sf.Alignment = StringAlignment.Far;
+                using (Font f = new Font(FontCollection.Families[0], 12, FontStyle.Regular))
+                    g.DrawString("x" + nAmount.ToString(), f, b, new Rectangle(50, 82, 50, 20), sf);
+            }
+
+            result.Save(Path.Combine(FilePath, "ItemBought" + nID + ".png"), ImageFormat.Png);
+            return "ItemBought" + nID + ".png";
+        }
+
+        public string ItemUsed(int nID, int nAmount)
+        {
+            Bitmap result = new Bitmap(350, 120);
+
+            Item item = Item.GetItemByID(nID);
+            if (item == null)
+                return String.Empty;
+
+            using (Graphics g = Graphics.FromImage(result))
+            using (StringFormat sf = new StringFormat())
+            using (SolidBrush b = new SolidBrush(Color.Black))
+            {
+                g.Clear(m_clrUserInfoBG);
+
+                // Item Image
+                g.DrawImage(SlotDefault, 15, 15);
+                g.DrawImage(Items[nID - 1], 15, 15);
+
+                // Item Name
+                using (Font f = new Font(FontCollection.Families[0], 12, FontStyle.Bold))
+                    g.DrawString(item.Name, f, b, new Rectangle(118, 15, 250, 80), sf);
+
+                using (Font f = new Font(FontCollection.Families[0], 10, FontStyle.Regular))
+                    g.DrawString("Item(s) successfully used!", f, b, new Rectangle(118, 41, 300, 80), sf);
+
+                sf.Alignment = StringAlignment.Far;
+                using (Font f = new Font(FontCollection.Families[0], 12, FontStyle.Regular))
+                    g.DrawString("x" + nAmount.ToString(), f, b, new Rectangle(50, 82, 50, 20), sf);
+            }
+
+            result.Save(Path.Combine(FilePath, "ItemUsed" + nID + ".png"), ImageFormat.Png);
+            return "ItemUsed" + nID + ".png";
+        }
+
         private Bitmap QuestPanel(int nIndex, User user)
         {
             Quest quest = Data.Singleton.Quests.FirstOrDefault(

@@ -77,8 +77,13 @@ namespace EunokiBot
                     return;
                 }
 
-                _ = await Context.Channel.SendMessageAsync(":tada: Item was sucessfully bought!");
                 user.Money -= item.Price * (nAmount - nResult);
+
+                IDMChannel dmChannel = await Context.User.GetOrCreateDMChannelAsync();
+                string sImagePath = Path.Combine(ImageManager.Singleton.FilePath, 
+                    ImageManager.Singleton.ItemBought(nID, nAmount - nResult));
+                await dmChannel.SendFileAsync(sImagePath);
+                File.Delete(sImagePath);
             }
 
             [Command("info"), Alias("desc", "description", "detail"), Summary("Information about item.")]

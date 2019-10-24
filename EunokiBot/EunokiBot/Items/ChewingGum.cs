@@ -11,8 +11,6 @@ namespace EunokiBot.Items
             SocketCommandContext context, User user, Inventory inventory, object param = null)
         {
             Data.Singleton.Gums += 3;
-            _ = DiscRefManager.Singleton.ChannelMain.SendMessageAsync(Utilities.GetAlert(
-                "GUMDROP_&MENTION", Program.Singleton.Client.GetUser(user.UserID).Mention));
         }
     }
 }

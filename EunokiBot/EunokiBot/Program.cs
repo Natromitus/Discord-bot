@@ -20,7 +20,7 @@ namespace EunokiBot
         private CommandHandler _cmdHandler;
         private Alerts _alertHandler;
         #endregion
-
+            
         #region Properties
         public static Program Singleton => m_singleton;
         public DiscordSocketClient Client => _client;

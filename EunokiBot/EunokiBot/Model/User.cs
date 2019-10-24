@@ -16,7 +16,7 @@ namespace EunokiBot.Model
         private int m_nXP;
         private int m_nMoney;
         private int m_nQuests;
-        private int m_nReroll;
+        private string m_nReroll;
         private string m_nJoinedDate;
         private int m_nQuestID1;
         private int m_nQuestID2;
@@ -102,7 +102,7 @@ namespace EunokiBot.Model
             }
         }
 
-        public int Reroll
+        public string Reroll
         {
             get { return m_nReroll; }
             set
@@ -203,8 +203,9 @@ namespace EunokiBot.Model
             {
                 UserID = id;
                 Level = 1;
-                Warnings = Messages = XP = Money = Quests = Reroll = 0;
+                Warnings = Messages = XP = Money = Quests = 0;
                 JoinedDate = DateTime.Now.ToString("d. MM. yyyy");
+                Reroll = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
                 AssignQuests();
             }
         }

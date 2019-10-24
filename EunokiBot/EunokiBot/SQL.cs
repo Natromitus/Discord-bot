@@ -28,7 +28,7 @@ namespace EunokiBot
                     return m_cnn;
 
                 string m_sConnectionString = "Data Source=" +
-                    Assembly.GetEntryAssembly().Location.Replace(@"EunokiBot.dll", @"Database\Main.db");
+                    Assembly.GetEntryAssembly().Location.Replace(@"EunokiBot.dll", @"Database\Main.db" + ";datetimeformat=Ticks");
                 m_cnn = new SQLiteConnection(m_sConnectionString);
                 return m_cnn;
             }

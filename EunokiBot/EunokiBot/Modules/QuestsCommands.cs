@@ -9,6 +9,7 @@ using Discord.Rest;
 
 using EunokiBot.Model;
 using EunokiBot.ImageManagment;
+using System;
 
 namespace EunokiBot.Modules
 {
@@ -46,7 +47,20 @@ namespace EunokiBot.Modules
         [Command("reroll"), Alias("roll"), Summary("Generate another quests.")]
         public async Task QuestRerollAsync()
         {
+            User user = User.Get(Context.User.Id);
+            if (user == null)
+                return;
 
+            DateTime now = DateTime.Now;
+            DateTime last = DateTime.ParseExact(user.Reroll, "yyyy-MM-dd hh:mm:ss", 
+                System.Globalization.CultureInfo.InvariantCulture);
+
+            /*int nSpan = (now - last).Minutes;
+            if(nSpan >= 1)
+            {*/
+                user.AssignQuests();
+                user.Reroll = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+            //}
         }
     }
 }
