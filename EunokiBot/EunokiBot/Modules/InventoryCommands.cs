@@ -3,7 +3,6 @@ using System.Linq;
 
 using Discord;
 using Discord.Commands;
-using Discord.WebSocket;
 
 using EunokiBot.Model;
 using EunokiBot.Quests;
@@ -13,7 +12,7 @@ using EunokiBot.ImageManagment;
 
 namespace EunokiBot.Modules
 {
-    [Group("inventory"), Alias("inv"), Summary("Inventory commands.")]
+    [Group("inventory"), Alias("inv", "i"), Summary("Inventory commands.")]
     public class InventoryCommands : ModuleBase<SocketCommandContext>
     {
         [Command(""), Alias("help"),Summary("List of all commands to be used with inventory.")]
@@ -26,6 +25,7 @@ namespace EunokiBot.Modules
         [Command("use"), Summary("Use item on desired inventory slot.")]
         public async Task UseItemAsync(int nIndex = 0, int nAmount = 1, [Remainder]string sParam = null)
         {
+            // Mention Check
             IUser targetUser = null;
             if (!string.IsNullOrWhiteSpace(sParam))
             {
@@ -80,6 +80,7 @@ namespace EunokiBot.Modules
                 return;
             }
 
+            // Quests
             ActionParam action = new ActionParam("Item", Convert.ToUInt64(inventory.GetID(nIndex - 1)));
             ActionManager.Singleton.OnAction(user, action);
 

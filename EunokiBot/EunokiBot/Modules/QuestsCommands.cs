@@ -16,7 +16,7 @@ namespace EunokiBot.Modules
     [Group("quests"), Alias("quest"), Summary("Quests commands.")]
     public class QuestsCommands : ModuleBase<SocketCommandContext>
     {
-        [Command(""), Alias("help"), Summary("List of all commands to be used with inventory.")]
+        [Command(""), Alias("info"), Summary("List of all quests.")]
         public async Task QuestsInfoAsync()
         {
             User user = User.Get(Context.User.Id);
@@ -29,22 +29,11 @@ namespace EunokiBot.Modules
             if (sImageFileName == string.Empty)
                 return;
 
-            RestUserMessage picture = await channel.SendFileAsync(
-                Path.Combine(ImageManager.Singleton.FilePath, sImageFileName), string.Empty);
-            string imgurl = picture.Attachments.First().Url;
-
-            EmbedBuilder embed = new EmbedBuilder();
-            embed.WithImageUrl(imgurl);
-
+            await Context.Channel.SendFileAsync(Path.Combine(ImageManager.Singleton.FilePath, sImageFileName));
             File.Delete(Path.Combine(ImageManager.Singleton.FilePath, sImageFileName));
-
-            await Context.Channel.SendMessageAsync("", false, embed.Build());
-            await Task.Delay(500);
-            _ = picture.DeleteAsync();
-
         }
 
-        [Command("reroll"), Alias("roll"), Summary("Generate another quests.")]
+        [Command("reroll"), Alias("roll"), Summary("Assign new daily quests to user.")]
         public async Task QuestRerollAsync()
         {
             User user = User.Get(Context.User.Id);
@@ -55,12 +44,12 @@ namespace EunokiBot.Modules
             DateTime last = DateTime.ParseExact(user.Reroll, "yyyy-MM-dd hh:mm:ss", 
                 System.Globalization.CultureInfo.InvariantCulture);
 
-            /*int nSpan = (now - last).Minutes;
-            if(nSpan >= 1)
-            {*/
+            int nSpan = (now - last).Minutes;
+            if(nSpan >= 1440)
+            {
                 user.AssignQuests();
                 user.Reroll = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
-            //}
+            }   
         }
     }
 }

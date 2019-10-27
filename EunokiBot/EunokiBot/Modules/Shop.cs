@@ -36,7 +36,7 @@ namespace EunokiBot
                 if (sImageFileName == string.Empty)
                     return;
 
-                Context.Channel.SendFileAsync(
+                _ = Context.Channel.SendFileAsync(
                     Path.Combine(ImageManager.Singleton.FilePath, sImageFileName), string.Empty);
             }
 

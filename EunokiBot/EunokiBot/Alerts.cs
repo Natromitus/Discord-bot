@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 using Discord;
 using Discord.WebSocket;
-
+using EunokiBot.ImageManagment;
 using EunokiBot.Model;
 
 namespace EunokiBot
@@ -47,9 +48,16 @@ namespace EunokiBot
 
             if (nLevel != 1)
             {
+                // Send DM of Item used
+                User modelUser = User.Get(ulUserID);
+                if (modelUser == null)
+                    return;
+
                 IDMChannel dmChannel = await user.GetOrCreateDMChannelAsync();
-                _ = channel.SendMessageAsync(Utilities.GetAlert("LEVELUP_&MENTION_&LEVEL", user.Mention, nLevel));
-                _ = dmChannel.SendMessageAsync(Utilities.GetAlert("LEVELUPDM_&LEVEL", nLevel));
+                string sImagePath = Path.Combine(ImageManager.Singleton.FilePath,
+                    ImageManager.Singleton.LevelUp(user, modelUser));
+                await dmChannel.SendFileAsync(sImagePath);
+                File.Delete(sImagePath);
             }
         }
 

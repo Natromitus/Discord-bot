@@ -15,7 +15,15 @@ namespace EunokiBot.Model
             if (ReadSuspender.IsSuspended)
                 return false;
 
-            if(!WriteSuspender.IsSuspended)
+            if (WriteSuspender.IsSuspended)
+                return true;
+
+            if (value.GetType() == typeof(string))
+            {
+                string sCurVal = "'" + value + "'";
+                SQL.Singleton.UpdateValue(OnGetTableName(), propertyName, sCurVal, OnGetPrimaryKeyName(), OnGetPrimaryKeyValue());
+            }
+            else
                 SQL.Singleton.UpdateValue(OnGetTableName(), propertyName, value, OnGetPrimaryKeyName(), OnGetPrimaryKeyValue());
 
             return true;

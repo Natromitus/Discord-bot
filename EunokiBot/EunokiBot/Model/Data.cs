@@ -166,6 +166,15 @@ namespace EunokiBot.Model
         }
 
         public IEnumerable<string> ImageEndings => m_arImageEndings;
+
+        public int[] MoneyRewards { get; } =
+        {
+            5, 10, 15, 20, 30, 50, 50
+        };
+        public int[] ItemRewards { get; } =
+        {
+            0, 1, 11, 11, 9, 11, 13
+        };
         #endregion
     }
 }

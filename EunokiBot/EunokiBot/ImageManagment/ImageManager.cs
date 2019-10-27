@@ -346,40 +346,139 @@ namespace EunokiBot.ImageManagment
             return sShop;
         }
 
-        public string QuestsInfo(User user)
+        public string DailyRewards(User user)
         {
-            Bitmap result = new Bitmap(300, 240);
+            /*
+            2. X Day - Reward images + amount
+            3. If claimed -> Check?
+            4. Reveal only next day other are hidden
+            */
 
-            using(Graphics g = Graphics.FromImage(result))
+            Bitmap result = new Bitmap(300, 380);
+
+            using (Graphics g = Graphics.FromImage(result))
             {
                 g.Clear(m_clrUserInfoBG);
 
-                int nOffset = 0;
-                for(int i = 0; i < user.CurrentQuests.Count(); ++i)
+                // Quest Reroll Cooldown
+                DateTime now = DateTime.Now;
+                DateTime last = DateTime.ParseExact(user.Reroll, "yyyy-MM-dd hh:mm:ss",
+                    System.Globalization.CultureInfo.InvariantCulture);
+
+                int nSpan = (now - last).Minutes;
+
+                if (nSpan >= 1440)
                 {
-                    Bitmap bmpPanel = QuestPanel(i, user);
+                    using (SolidBrush b = new SolidBrush(Color.Black))
+                    using (Font f = new Font(FontCollection.Families[0], 12, FontStyle.Regular))
+                        g.DrawString("Daily reward ready!", f, b, new Rectangle(5, 5, 285, 20));
+                }
+                else
+                {
+                    int nTime = 1440 - nSpan;
+                    string sText = "Daily reward available in ";
+                    int nHours = nTime / 60;
+                    if (nHours != 0)
+                    {
+                        sText += nHours.ToString();
+                        sText += "h ";
+                    }
+
+                    int nMins = nTime % 60;
+                    sText += nMins.ToString();
+                    sText += "min";
+
+                    using (SolidBrush b = new SolidBrush(Color.Black))
+                    using (Font f = new Font(FontCollection.Families[0], 12, FontStyle.Regular))
+                        g.DrawString(sText, f, b, new Rectangle(5, 5, 290, 20));
+                }
+
+                int nOffset = 30;
+                for (int i = 0; i < 7; ++i)
+                {
+                    Bitmap bmpPanel = RewardPanel(i + 1, Data.Singleton.MoneyRewards[i], Data.Singleton.ItemRewards[i] - 1);
                     g.DrawImage(bmpPanel, 0, nOffset);
                     nOffset += bmpPanel.Height;
                 }
 
-                nOffset = result.Height / 3 - 1;
-                for(int i = 0; i < user.CurrentQuests.Count() - 1; ++i)
+                nOffset = (result.Height - 30) / 7 - 1;
+                for (int i = 0; i < 6; ++i)
                 {
                     using (Pen p = new Pen(Color.Black))
-                        g.DrawLine(p, new Point(25, nOffset),
-                            new Point(result.Width - 25, nOffset));
+                        g.DrawLine(p, new Point(25, nOffset + 30),
+                            new Point(result.Width - 25, nOffset + 30));
 
-                    nOffset += result.Height / 3 - 1;
+                    nOffset += (result.Height - 30) / 7;
                 }
             }
+            result.Save(Path.Combine(FilePath, user.UserID + "Daily.png"), ImageFormat.Png);
+            return user.UserID + "Daily.png";
+        }
 
-            result.Save(Path.Combine(FilePath, user.UserID + "Quests.png"), ImageFormat.Png);
-            return user.UserID + "Quests.png";
+        private Bitmap RewardPanel(int nDay, int nMoney, int nID)
+        {
+            Bitmap result = new Bitmap(300, 50);
+
+            using (Graphics g = Graphics.FromImage(result))
+            using (StringFormat sf = new StringFormat())
+            using (SolidBrush b = new SolidBrush(Color.Black))
+            {
+                g.Clear(Color.FromArgb(240, 240, 240));
+
+                // Text
+                using (Font f = new Font(FontCollection.Families[0], 12, FontStyle.Bold))
+                    g.DrawString("Day " + nDay, f, b, new Rectangle(25, 15, 100, 20), sf);
+
+                g.DrawImage(Icons[0], new Rectangle(120 , 12, 25, 25));
+                using (Font f = new Font(FontCollection.Families[0], 12, FontStyle.Regular))
+                    g.DrawString(nMoney.ToString(), f, b, new Rectangle(140, 15, 150, 20), sf);
+
+                if(nID >= 0)
+                    g.DrawImage(Items[nID], new Rectangle(200, -3, 50, 50));
+            }
+
+            return result;
+        }
+
+        #region Notifications
+        public string LevelUp(SocketUser contextUser, User user)
+        {
+            System.Net.WebRequest request = System.Net.WebRequest.Create(contextUser.GetAvatarUrl());
+            System.Net.WebResponse response = request.GetResponse();
+            Stream responseStream = response.GetResponseStream();
+            Bitmap bmpAvatar = new Bitmap(responseStream);
+
+            Bitmap result = new Bitmap(350, 120);
+
+            using (Graphics g = Graphics.FromImage(result))
+            using (StringFormat sf = new StringFormat())
+            using (SolidBrush b = new SolidBrush(Color.Black))
+            {
+                g.Clear(m_clrUserInfoBG);
+
+                sf.LineAlignment = StringAlignment.Center;
+                sf.Alignment = StringAlignment.Center;
+
+                g.DrawImage(bmpAvatar, 15, 15, 90, 90);
+
+                using (Font f = new Font(FontCollection.Families[0], 14, FontStyle.Bold))
+                    g.DrawString(Truncate(contextUser.Username.ToUpper(), 11), f, b,
+                        new Rectangle(m_nMargin, m_nAvatar + 2 * m_nMargin, 300, 28));
+
+                using (Font f = new Font(FontCollection.Families[0], 20, FontStyle.Bold))
+                    g.DrawString("Congratulations!", f, b, new Rectangle(110, 15, 250, 35));
+
+                using (Font f = new Font(FontCollection.Families[0], 14, FontStyle.Regular))
+                    g.DrawString("On reaching Level " + user.Level + "", f, b, new Rectangle(111, 48, 250, 25));
+            }
+
+            result.Save(Path.Combine(FilePath, user.UserID + ".png"), ImageFormat.Png);
+            return user.UserID + ".png";
         }
 
         public string ItemDesc(int nID)
         {
-            Bitmap result = new Bitmap(400, 120); 
+            Bitmap result = new Bitmap(400, 120);
 
             Item item = Item.GetItemByID(nID);
             if (item == null)
@@ -497,6 +596,72 @@ namespace EunokiBot.ImageManagment
             result.Save(Path.Combine(FilePath, "ItemUsed" + nID + ".png"), ImageFormat.Png);
             return "ItemUsed" + nID + ".png";
         }
+        #endregion
+
+        #region Quests
+        public string QuestsInfo(User user)
+        {
+            Bitmap result = new Bitmap(300, 270);
+
+            using(Graphics g = Graphics.FromImage(result))
+            {
+                g.Clear(m_clrUserInfoBG);
+
+                // Quest Reroll Cooldown
+                DateTime now = DateTime.Now;
+                DateTime last = DateTime.ParseExact(user.Reroll, "yyyy-MM-dd hh:mm:ss",
+                    System.Globalization.CultureInfo.InvariantCulture);
+
+                int nSpan = (now - last).Minutes;
+
+                if (nSpan >= 1440)
+                {
+                    using (SolidBrush b = new SolidBrush(Color.Black))
+                    using (Font f = new Font(FontCollection.Families[0], 12, FontStyle.Regular))
+                        g.DrawString("Quest reroll ready!", f, b, new Rectangle(5, 5, 285, 20));
+                }
+                else
+                {
+                    int nTime = 1440 - nSpan;
+                    string sText = "Quest reroll available in ";
+                    int nHours = nTime / 60;
+                    if(nHours != 0)
+                    {
+                        sText += nHours.ToString();
+                        sText += "h ";
+                    }
+
+                    int nMins = nTime % 60;
+                    sText += nMins.ToString();
+                    sText += "min";
+
+                    using (SolidBrush b = new SolidBrush(Color.Black))
+                    using (Font f = new Font(FontCollection.Families[0], 12, FontStyle.Regular))
+                        g.DrawString(sText, f, b, new Rectangle(5, 5, 290, 20));
+                }
+
+                int nOffset = 30;
+                for(int i = 0; i < user.CurrentQuests.Count(); ++i)
+                {
+                    Bitmap bmpPanel = QuestPanel(i, user);
+                    g.DrawImage(bmpPanel, 0, nOffset);
+                    nOffset += bmpPanel.Height;
+                }
+
+                nOffset = (result.Height - 30) / 3 - 1;
+                for(int i = 0; i < user.CurrentQuests.Count() - 1; ++i)
+                {
+                    using (Pen p = new Pen(Color.Black))
+                        g.DrawLine(p, new Point(25 , nOffset + 30),
+                            new Point(result.Width - 25, nOffset + 30));
+
+                    nOffset += (result.Height - 30) / 3 - 1;
+                }
+            }
+
+            result.Save(Path.Combine(FilePath, user.UserID + "Quests.png"), ImageFormat.Png);
+            return user.UserID + "Quests.png";
+        }
 
         private Bitmap QuestPanel(int nIndex, User user)
         {
@@ -510,7 +675,7 @@ namespace EunokiBot.ImageManagment
             using (SolidBrush b = new SolidBrush(Color.Black))
             using (SolidBrush b2 = new SolidBrush(m_arQuestColors[quest.Difficulty]))
             {
-                g.Clear(m_clrUserInfoBG);
+                g.Clear(Color.FromArgb(240, 240, 240));
                 g.FillRectangle(b2, new Rectangle(0, 0, 5, 80));
 
                 if (quest.QuestID == 0)
@@ -534,7 +699,7 @@ namespace EunokiBot.ImageManagment
                 nAngleProgress *= user.CurrentQuests.ToArray()[nIndex].Value;
                 g.FillPie(b2, new Rectangle(14, 7, 62, 62), 270, nAngleProgress);
 
-                using (SolidBrush b3 = new SolidBrush(m_clrUserInfoBG))
+                using (SolidBrush b3 = new SolidBrush(Color.FromArgb(240, 240, 240)))
                     g.FillEllipse(b3, new Rectangle(20, 13, 50, 50));
 
                 g.DrawImage(Icons[4], 30, 23);
@@ -553,6 +718,7 @@ namespace EunokiBot.ImageManagment
 
             return result;
         }
+        #endregion
 
         #region Generic
         private Bitmap SlotGrid(Bitmap bmpSlot, int nX, int nY)

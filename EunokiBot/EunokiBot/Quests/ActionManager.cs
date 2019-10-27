@@ -67,6 +67,7 @@ namespace EunokiBot.Quests
                 {
                     QuestReward reward = QuestReward.GetRewardByDifficulty(quest.Difficulty);
                     user.XP += reward.XP;
+                    ++user.Quests;
 
                     float fRnd1 = (float)new Random().NextDouble();
                     if (fRnd1 < reward.ChanceGold)

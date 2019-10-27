@@ -16,8 +16,10 @@ namespace EunokiBot.Model
         private int m_nXP;
         private int m_nMoney;
         private int m_nQuests;
-        private string m_nReroll;
-        private string m_nJoinedDate;
+        private int m_nDailyCount;
+        private string m_sDaily;
+        private string m_sReroll;
+        private string m_sJoinedDate;
         private int m_nQuestID1;
         private int m_nQuestID2;
         private int m_nQuestID3;
@@ -102,21 +104,39 @@ namespace EunokiBot.Model
             }
         }
 
-        public string Reroll
+        public int DailyCount
         {
-            get { return m_nReroll; }
+            get { return m_nDailyCount; }
             set
             {
-                SetField(ref m_nReroll, value);
+                SetField(ref m_nDailyCount, value);
+            }
+        }
+
+        public string Daily
+        {
+            get { return m_sDaily; }
+            set
+            {
+                SetField(ref m_sDaily, value);
+            }
+        }
+
+        public string Reroll
+        {
+            get { return m_sReroll; }
+            set
+            {
+                SetField(ref m_sReroll, value);
             }
         }
 
         public string JoinedDate
         {
-            get { return m_nJoinedDate; }
+            get { return m_sJoinedDate; }
             set
             {
-                SetField(ref m_nJoinedDate, value);
+                SetField(ref m_sJoinedDate, value);
             }
         }
 
@@ -203,7 +223,7 @@ namespace EunokiBot.Model
             {
                 UserID = id;
                 Level = 1;
-                Warnings = Messages = XP = Money = Quests = 0;
+                Warnings = Messages = XP = Money = Quests = DailyCount = 0;
                 JoinedDate = DateTime.Now.ToString("d. MM. yyyy");
                 Reroll = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
                 AssignQuests();
@@ -227,9 +247,11 @@ namespace EunokiBot.Model
         public static void NewRecord(User user)
         {
            SQL.Singleton.Connection.Execute($"INSERT INTO {TABLE_NAME}" +
-                $" ({PRIMARY_KEY}, Warnings, Messages, Level, XP, Money, Quests, Reroll, JoinedDate," +
+                $" ({PRIMARY_KEY}, Warnings, Messages, Level, XP, Money, Quests," +
+                $" DailyCount, Daily, Reroll, JoinedDate," +
                 $" QuestID1, Progress1, QuestID2, Progress2, QuestID3, Progress3)" +
-                $" VALUES (@{PRIMARY_KEY}, @Warnings, @Messages, @Level, @XP, @Money, @Quests, @Reroll, @JoinedDate," +
+                $" VALUES (@{PRIMARY_KEY}, @Warnings, @Messages, @Level, @XP, @Money, @Quests," +
+                $" @DailyCount, @Daily, @Reroll, @JoinedDate," +
                 $" @QuestID1, @Progress1, @QuestID2, @Progress2, @QuestID3, @Progress3)", user);
         }
 
