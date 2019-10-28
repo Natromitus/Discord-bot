@@ -41,14 +41,14 @@ namespace EunokiBot.Modules
                 return;
 
             DateTime now = DateTime.Now;
-            DateTime last = DateTime.ParseExact(user.Reroll, "yyyy-MM-dd hh:mm:ss", 
+            DateTime last = DateTime.ParseExact(user.Reroll, "yyyy-MM-dd HH:mm:ss", 
                 System.Globalization.CultureInfo.InvariantCulture);
 
-            int nSpan = (now - last).Minutes;
-            if(nSpan >= 1440)
+            TimeSpan span = now - last;
+            if (span.TotalMinutes >= 1440)
             {
                 user.AssignQuests();
-                user.Reroll = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+                user.Reroll = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             }   
         }
     }

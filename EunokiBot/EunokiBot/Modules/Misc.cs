@@ -23,6 +23,17 @@ namespace EunokiBot.Modules
                 "We value your feedback and this is perfect place to let us know what you think!");
         }
 
+        [Command("anal")]
+        public async Task AnalyticsAsync()
+        {
+            _ = DiscRefManager.Singleton.ChannelInfo.SendMessageAsync(
+                "Members: 0\n" +
+                "Patreons: 0\n" +
+                "Males: 0\n" +
+                "Females: 0\n" +
+                "Other: 0");
+        }
+
         [Command("socialmedia")]
     
         public async Task SocialMediaAsync()

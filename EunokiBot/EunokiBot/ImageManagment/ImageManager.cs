@@ -20,11 +20,13 @@ namespace EunokiBot.ImageManagment
 
         private string m_sIDFileName = "ItemsByID";
         private string m_sUserInfoFileName = "UserInfo";
+        private string m_sAdditionalIcons = "AdditionalIcons";
 
         private PrivateFontCollection m_fCollection = new PrivateFontCollection();
 
         private List<Bitmap> m_arBmpItems = null;
         private List<Bitmap> m_arBmpIcons = null;
+        private List<Bitmap> m_arBmpAddIcons = null;
         private List<Bitmap> m_arBmpShopDefault = null;
         private Bitmap m_bmpSlotDefault = null;
         private Bitmap m_bmpUserInfoDefault = null;
@@ -197,6 +199,21 @@ namespace EunokiBot.ImageManagment
             }
         }
 
+        private List<Bitmap> AddIcons
+        {
+            get
+            {
+                if (m_arBmpAddIcons == null)
+                {
+                    m_arBmpAddIcons = new List<Bitmap>();
+                    string[] files = Directory.GetFiles(Path.Combine(FilePath, m_sAdditionalIcons));
+                    m_arBmpAddIcons = files.Select(obj => new Bitmap(obj)).ToList();
+                }
+
+                return m_arBmpAddIcons;
+            }
+        }
+
         #endregion
 
         #region Generic Functions
@@ -348,12 +365,6 @@ namespace EunokiBot.ImageManagment
 
         public string DailyRewards(User user)
         {
-            /*
-            2. X Day - Reward images + amount
-            3. If claimed -> Check?
-            4. Reveal only next day other are hidden
-            */
-
             Bitmap result = new Bitmap(300, 380);
 
             using (Graphics g = Graphics.FromImage(result))
@@ -362,11 +373,11 @@ namespace EunokiBot.ImageManagment
 
                 // Quest Reroll Cooldown
                 DateTime now = DateTime.Now;
-                DateTime last = DateTime.ParseExact(user.Reroll, "yyyy-MM-dd hh:mm:ss",
+                DateTime last = DateTime.ParseExact(user.Daily, "yyyy-MM-dd HH:mm:ss",
                     System.Globalization.CultureInfo.InvariantCulture);
 
-                int nSpan = (now - last).Minutes;
-
+                double nSpan = (now - last).TotalMinutes;
+                
                 if (nSpan >= 1440)
                 {
                     using (SolidBrush b = new SolidBrush(Color.Black))
@@ -375,17 +386,17 @@ namespace EunokiBot.ImageManagment
                 }
                 else
                 {
-                    int nTime = 1440 - nSpan;
+                    double nTime = 1440 - nSpan;
                     string sText = "Daily reward available in ";
-                    int nHours = nTime / 60;
+                    double nHours = nTime / 60;
                     if (nHours != 0)
                     {
-                        sText += nHours.ToString();
+                        sText += Math.Truncate(nHours).ToString();
                         sText += "h ";
                     }
 
-                    int nMins = nTime % 60;
-                    sText += nMins.ToString();
+                    double nMins = nTime % 60;
+                    sText += Math.Truncate(nMins).ToString();
                     sText += "min";
 
                     using (SolidBrush b = new SolidBrush(Color.Black))
@@ -396,7 +407,12 @@ namespace EunokiBot.ImageManagment
                 int nOffset = 30;
                 for (int i = 0; i < 7; ++i)
                 {
-                    Bitmap bmpPanel = RewardPanel(i + 1, Data.Singleton.MoneyRewards[i], Data.Singleton.ItemRewards[i] - 1);
+                    bool bTaken = false;
+                    if (i < user.DailyCount)
+                        bTaken = true;
+
+                    Bitmap bmpPanel = RewardPanel(i + 1, Data.Singleton.MoneyRewards[i],
+                        Data.Singleton.ItemRewards[i] - 1, bTaken);
                     g.DrawImage(bmpPanel, 0, nOffset);
                     nOffset += bmpPanel.Height;
                 }
@@ -415,7 +431,7 @@ namespace EunokiBot.ImageManagment
             return user.UserID + "Daily.png";
         }
 
-        private Bitmap RewardPanel(int nDay, int nMoney, int nID)
+        private Bitmap RewardPanel(int nDay, int nMoney, int nID, bool bTaken)
         {
             Bitmap result = new Bitmap(300, 50);
 
@@ -425,13 +441,18 @@ namespace EunokiBot.ImageManagment
             {
                 g.Clear(Color.FromArgb(240, 240, 240));
 
+                if (bTaken)
+                    g.DrawImage(AddIcons[0], new Rectangle(5, 10, 30, 30));
+                else
+                    g.DrawImage(AddIcons[1], new Rectangle(5, 10, 30, 30));
+
                 // Text
                 using (Font f = new Font(FontCollection.Families[0], 12, FontStyle.Bold))
-                    g.DrawString("Day " + nDay, f, b, new Rectangle(25, 15, 100, 20), sf);
+                    g.DrawString("Day " + nDay, f, b, new Rectangle(35, 15, 100, 20), sf);
 
-                g.DrawImage(Icons[0], new Rectangle(120 , 12, 25, 25));
+                g.DrawImage(Icons[0], new Rectangle(130 , 12, 25, 25));
                 using (Font f = new Font(FontCollection.Families[0], 12, FontStyle.Regular))
-                    g.DrawString(nMoney.ToString(), f, b, new Rectangle(140, 15, 150, 20), sf);
+                    g.DrawString(nMoney.ToString(), f, b, new Rectangle(150, 15, 150, 20), sf);
 
                 if(nID >= 0)
                     g.DrawImage(Items[nID], new Rectangle(200, -3, 50, 50));
@@ -609,10 +630,10 @@ namespace EunokiBot.ImageManagment
 
                 // Quest Reroll Cooldown
                 DateTime now = DateTime.Now;
-                DateTime last = DateTime.ParseExact(user.Reroll, "yyyy-MM-dd hh:mm:ss",
+                DateTime last = DateTime.ParseExact(user.Reroll, "yyyy-MM-dd HH:mm:ss",
                     System.Globalization.CultureInfo.InvariantCulture);
 
-                int nSpan = (now - last).Minutes;
+                double nSpan = (now - last).TotalMinutes;
 
                 if (nSpan >= 1440)
                 {
@@ -622,17 +643,17 @@ namespace EunokiBot.ImageManagment
                 }
                 else
                 {
-                    int nTime = 1440 - nSpan;
+                    double nTime = 1440 - nSpan;
                     string sText = "Quest reroll available in ";
-                    int nHours = nTime / 60;
-                    if(nHours != 0)
+                    double nHours = nTime / 60;
+                    if (nHours != 0)
                     {
-                        sText += nHours.ToString();
+                        sText += Math.Truncate(nHours).ToString();
                         sText += "h ";
                     }
 
-                    int nMins = nTime % 60;
-                    sText += nMins.ToString();
+                    double nMins = nTime % 60;
+                    sText += Math.Truncate(nMins).ToString();
                     sText += "min";
 
                     using (SolidBrush b = new SolidBrush(Color.Black))

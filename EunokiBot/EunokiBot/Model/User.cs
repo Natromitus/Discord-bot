@@ -225,7 +225,8 @@ namespace EunokiBot.Model
                 Level = 1;
                 Warnings = Messages = XP = Money = Quests = DailyCount = 0;
                 JoinedDate = DateTime.Now.ToString("d. MM. yyyy");
-                Reroll = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+                Daily = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd HH:mm:ss");
+                Reroll = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                 AssignQuests();
             }
         }

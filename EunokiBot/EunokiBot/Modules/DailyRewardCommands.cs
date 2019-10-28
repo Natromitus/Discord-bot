@@ -25,10 +25,6 @@ namespace EunokiBot.Modules
 
             await Context.Channel.SendFileAsync(Path.Combine(ImageManager.Singleton.FilePath, sImageFileName));
             File.Delete(Path.Combine(ImageManager.Singleton.FilePath, sImageFileName));
-
-            // Show ImageManager generated picture of Daily rewards.
-            // Check on these that user already claimed.
-            // Next avaible daily claim in?
         }
 
         [Command("claim"), Alias("get", "reward"), Summary("Claim your daily reward.")]
@@ -39,21 +35,14 @@ namespace EunokiBot.Modules
                 return;
 
             DateTime now = DateTime.Now;
-            DateTime last = DateTime.ParseExact(user.Daily, "yyyy-MM-dd hh:mm:ss",
+            DateTime last = DateTime.ParseExact(user.Daily, "yyyy-MM-dd HH:mm:ss",
                 System.Globalization.CultureInfo.InvariantCulture);
 
-            if (last == null)
-            {
-                user.DailyCount = 1;
-                user.Daily = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
-                GetDailyReward(user, user.DailyCount);
-                return;
-            }
-
-            int nSpan = (now - last).Minutes;
-            if (nSpan >= 1440)
+            TimeSpan span = now - last;
+            if (span.TotalMinutes >= 1440)
             {
                 ++user.DailyCount;
+                user.Daily = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                 GetDailyReward(user, user.DailyCount);
                 if (user.DailyCount >= 7)
                     user.DailyCount = 0;
