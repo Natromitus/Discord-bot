@@ -10,5 +10,10 @@
   "CAKEGRAB_&MENTION_&AMOUNTLEFT": "{0} just grabbed a cake! Cakes left: {1}",
   "CAKELIE_&MENTION_&AMOUNTLEFT": "{0} fell for a lie! Cakes left: {1}",
   "MINIGUN_&MENTION": "{0} just pulled something from his pocket! Watch out!",
-  "FLEX_&MENTION": "{0} just flexed on all of you! Yes, he is that kind of person."
+  "FLEX_&MENTION": "{0} just flexed on all of you! Yes, he is that kind of person.",
+  "DAILYREWARD_COOLDOWN": "Can't claim reward! See $daily for more info.",
+  "DAILYREWARD_CLAIM": "You have successfully claimed your reward!",
+  "DAILYREWARD_FINISHED": "You have successfully finished whole week! We are happy to have you here!",
+  "QUESTSREROLL_EXECUTED": "New quests have been successfully assigned to you.",
+  "QUESTSREROLL_COOLDOWN": "Can't reroll quests. See $quests for more info."
 }

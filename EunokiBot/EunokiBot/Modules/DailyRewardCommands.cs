@@ -1,4 +1,5 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using EunokiBot.ImageManagment;
 using EunokiBot.Model;
 using System;
@@ -34,21 +35,31 @@ namespace EunokiBot.Modules
             if (user == null)
                 return;
 
+            IDMChannel dmChannel = await Context.User.GetOrCreateDMChannelAsync();
+
             DateTime now = DateTime.Now;
             DateTime last = DateTime.ParseExact(user.Daily, "yyyy-MM-dd HH:mm:ss",
                 System.Globalization.CultureInfo.InvariantCulture);
 
             TimeSpan span = now - last;
-            if (span.TotalMinutes >= 1440)
+            if(span.TotalMinutes < 1440)
             {
-                ++user.DailyCount;
-                user.Daily = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                GetDailyReward(user, user.DailyCount);
-                if (user.DailyCount >= 7)
-                    user.DailyCount = 0;
-
+                _ = dmChannel.SendMessageAsync(Utilities.GetAlert("DAILYREWARD_COOLDOWN"));
                 return;
             }
+
+            ++user.DailyCount;
+            user.Daily = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            GetDailyReward(user, user.DailyCount);
+            if (user.DailyCount >= 7)
+            {
+                _ = dmChannel.SendMessageAsync(Utilities.GetAlert("DAILYREWARD_FINISHED"));
+                user.DailyCount = 0;
+                return;
+            }
+
+            _ = dmChannel.SendMessageAsync(Utilities.GetAlert("DAILYREWARD_CLAIM"));
+            return;
         }
 
         private void GetDailyReward(User user, int nDay)

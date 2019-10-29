@@ -739,6 +739,54 @@ namespace EunokiBot.ImageManagment
 
             return result;
         }
+
+        public string QuestCompleted(int nID, QuestReward reward, bool bGoldReward, bool bMBReward)
+        {
+            Quest quest = Data.Singleton.Quests.FirstOrDefault(obj => obj.QuestID == nID);
+
+            Bitmap result = new Bitmap(350, 120);
+
+            using (Graphics g = Graphics.FromImage(result))
+            using (StringFormat sf = new StringFormat())
+            using (SolidBrush b = new SolidBrush(Color.Black))
+            using (SolidBrush b2 = new SolidBrush(m_arQuestColors[1]))
+            {
+                g.Clear(Color.FromArgb(240, 240, 240));
+                g.FillRectangle(b2, new Rectangle(0, 0, 8, 120));
+
+                g.DrawImage(AddIcons[2], 10, 15);
+
+                // Text
+                using (Font f = new Font(FontCollection.Families[0], 14, FontStyle.Bold))
+                    g.DrawString(quest.Name, f, b, new Rectangle(104, 14, 250, 20), sf);
+
+                using (Font f = new Font(FontCollection.Families[0], 12, FontStyle.Regular))
+                    g.DrawString(quest.Description, f, b, new Rectangle(105, 34, 250, 20), sf);
+
+                using (Font f = new Font(FontCollection.Families[0], 16, FontStyle.Regular))
+                {
+                    // XP
+                    g.DrawString("+" + reward.XP.ToString() + "XP", f, b, new Rectangle(105, 60, 200, 25));
+
+                    // MONEY
+                    g.DrawImage(Icons[0], new Rectangle(190, 60, 25, 25));
+
+                    if(bGoldReward)
+                        g.DrawString(reward.Gold.ToString(), f, b, new Rectangle(215, 60, 215, 25));
+                    else
+                        g.DrawString("0", f, b, new Rectangle(215, 60, 215, 25));
+
+                    // MYSTERY BOX
+                    if (bMBReward)
+                        g.DrawImage(Items[12], new Rectangle(265, 52, 40, 40));
+                }
+            }
+
+            Random rnd = new Random();
+            int x = rnd.Next(100);
+            result.Save(Path.Combine(FilePath, x + "QuestCompleted.png"), ImageFormat.Png);
+            return x + "QuestCompleted.png";
+        }
         #endregion
 
         #region Generic

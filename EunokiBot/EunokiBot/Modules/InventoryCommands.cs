@@ -82,7 +82,8 @@ namespace EunokiBot.Modules
 
             // Quests
             ActionParam action = new ActionParam("Item", Convert.ToUInt64(inventory.GetID(nIndex - 1)));
-            ActionManager.Singleton.OnAction(user, action);
+            for(int i = 0; i < nAmount; ++i)
+                ActionManager.Singleton.OnAction(user, action);
 
             for(int i = 0; i < nAmount; ++i)
             {

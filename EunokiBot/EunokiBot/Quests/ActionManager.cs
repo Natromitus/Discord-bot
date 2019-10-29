@@ -5,6 +5,10 @@ using System.Linq;
 
 using EunokiBot.Model;
 using System.Reflection;
+using EunokiBot.ImageManagment;
+using Discord;
+using Discord.WebSocket;
+using System.IO;
 
 namespace EunokiBot.Quests
 {
@@ -33,11 +37,11 @@ namespace EunokiBot.Quests
             if (quests.Count == 0)
                 return;
 
-            foreach(Quest quest in quests)
-                Progress(user, quest, bRemove);
+            foreach (Quest quest in quests)
+                Progress(user, quest, bRemove);  
         }
 
-        private void Progress(User user, Quest quest, bool bRemove)
+        private async void Progress(User user, Quest quest, bool bRemove)
         {
             List<int> arCurrentQuestsID = user.CurrentQuests.ToArray().Select(
                 obj => obj.Key).ToList();
@@ -65,20 +69,38 @@ namespace EunokiBot.Quests
             {
                 if (user.AddProgressOnIndex(iter, quest.Amount))
                 {
+                    bool bGoldReward = false, bMBReward = false;
+
                     QuestReward reward = QuestReward.GetRewardByDifficulty(quest.Difficulty);
                     user.XP += reward.XP;
                     ++user.Quests;
 
                     float fRnd1 = (float)new Random().NextDouble();
                     if (fRnd1 < reward.ChanceGold)
+                    {
+                        bGoldReward = true;
                         user.Money += reward.Gold;
+                    }
 
                     float fRnd2 = (float)new Random().NextDouble();
                     if (fRnd2 < reward.MBoxChance)
                     {
+                        bMBReward = true;
                         Inventory inventory = new Inventory(user.UserID);
-                        inventory.AddItem(17, 1);
+                        inventory.AddItem(13, 1);
                     }
+
+                    string sImageFileName = ImageManager.Singleton.QuestCompleted(arCurrentQuestsID[iter], reward, bGoldReward, bMBReward);
+                    if (sImageFileName == string.Empty)
+                        return;
+
+                    SocketUser socketUser = Program.Singleton.Client.GetUser(user.UserID);
+                    IDMChannel dmChannel = await socketUser.GetOrCreateDMChannelAsync();
+
+                    await dmChannel.SendFileAsync(
+                        Path.Combine(ImageManager.Singleton.FilePath, sImageFileName), string.Empty);
+
+                    File.Delete(Path.Combine(ImageManager.Singleton.FilePath, sImageFileName));
                 }
             }
         }

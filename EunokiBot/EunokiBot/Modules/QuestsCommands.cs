@@ -40,16 +40,22 @@ namespace EunokiBot.Modules
             if (user == null)
                 return;
 
+            IDMChannel dmChannel = await Context.User.GetOrCreateDMChannelAsync();
+
             DateTime now = DateTime.Now;
             DateTime last = DateTime.ParseExact(user.Reroll, "yyyy-MM-dd HH:mm:ss", 
                 System.Globalization.CultureInfo.InvariantCulture);
 
             TimeSpan span = now - last;
-            if (span.TotalMinutes >= 1440)
+            if (span.TotalMinutes < 1440)
             {
-                user.AssignQuests();
-                user.Reroll = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            }   
+                _ = dmChannel.SendMessageAsync(Utilities.GetAlert("QUESTSREROLL_COOLDOWN"));
+                return;
+            }
+
+            user.AssignQuests();
+            user.Reroll = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            _ = dmChannel.SendMessageAsync(Utilities.GetAlert("QUESTSREROLL_EXECUTED"));
         }
     }
 }
