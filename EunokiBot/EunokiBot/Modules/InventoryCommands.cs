@@ -15,13 +15,6 @@ namespace EunokiBot.Modules
     [Group("inventory"), Alias("inv", "i"), Summary("Inventory commands.")]
     public class InventoryCommands : ModuleBase<SocketCommandContext>
     {
-        [Command(""), Alias("help"),Summary("List of all commands to be used with inventory.")]
-        public async Task InventoryHelpAsync()
-        {
-            _ = Context.Channel.SendMessageAsync("TODO: HELP TEXT");
-        }
-
-
         [Command("use"), Summary("Use item on desired inventory slot.")]
         public async Task UseItemAsync(int nIndex = 0, int nAmount = 1, [Remainder]string sParam = null)
         {
@@ -85,7 +78,7 @@ namespace EunokiBot.Modules
             for(int i = 0; i < nAmount; ++i)
                 ActionManager.Singleton.OnAction(user, action);
 
-            for(int i = 0; i < nAmount; ++i)
+            for (int i = 0; i < nAmount; ++i)
             {
                 if (targetUser != null)
                     inventory.InventoryItems[nIndex - 1].Use(Context, user, inventory, targetUser);
@@ -108,6 +101,9 @@ namespace EunokiBot.Modules
             }
 
             // Send DM of Item used
+            if (user.Notifications == 0)
+                return;
+            
             IDMChannel dmChannel = await Context.User.GetOrCreateDMChannelAsync();
             string sImagePath = Path.Combine(ImageManager.Singleton.FilePath,
                 ImageManager.Singleton.ItemUsed(inventory.GetID(nIndex - 1), nAmount));

@@ -28,31 +28,31 @@ namespace EunokiBot.Items
             {
                 List<Item> items = Data.Singleton.Items.Where(obj => obj.Tier == 1).ToList();
                 Random rnd2 = new Random();
-                inventory.AddItem(rnd.Next(items.Count), 3);
+                inventory.AddItem(items[rnd.Next(items.Count)].ItemID, 3);
             }
             else if (fRnd < fTier1 + fTier2)
             {
                 List<Item> items = Data.Singleton.Items.Where(obj => obj.Tier == 2).ToList();
                 Random rnd2 = new Random();
-                inventory.AddItem(rnd.Next(items.Count), 2);
+                inventory.AddItem(items[rnd.Next(items.Count)].ItemID, 2);
             }
             else if (fRnd < fTier1 + fTier2 + fTier3)
             {
                 List<Item> items = Data.Singleton.Items.Where(obj => obj.Tier == 3).ToList();
                 Random rnd2 = new Random();
-                inventory.AddItem(rnd.Next(items.Count), 1);
+                inventory.AddItem(items[rnd.Next(items.Count)].ItemID, 1);
             }
             else if (fRnd < fTier1 + fTier2 + fTier3 + fTier4)
             {
                 List<Item> items = Data.Singleton.Items.Where(obj => obj.Tier == 4).ToList();
                 Random rnd2 = new Random();
-                inventory.AddItem(rnd.Next(items.Count), 1);
+                inventory.AddItem(items[rnd.Next(items.Count)].ItemID, 1);
             }
             else if (fRnd < fTier1 + fTier2 + fTier3 + fTier4 + fTier5)
             {
                 List<Item> items = Data.Singleton.Items.Where(obj => obj.Tier == 5).ToList();
                 Random rnd2 = new Random();
-                inventory.AddItem(rnd.Next(items.Count), 1);
+                inventory.AddItem(items[rnd.Next(items.Count)].ItemID, 1);
             }
         }
     }

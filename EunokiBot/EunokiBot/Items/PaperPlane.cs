@@ -15,14 +15,14 @@ namespace EunokiBot.Items
             IUser trgUser = param as IUser;
             if(trgUser == null)
             {
-                context.Channel.SendMessageAsync("Paper plane flew far away, far away.");
+                context.Channel.SendMessageAsync("Paper plane didn't have a target to hit :(");
                 return;
             }
 
-            User trgModerUser = User.Get(trgUser.Id);
-            if (trgModerUser == null)
+            User trgModelUser = User.Get(trgUser.Id);
+            if (trgModelUser == null)
             {
-                context.Channel.SendMessageAsync("Paper plane flew far away, far away.");
+                context.Channel.SendMessageAsync("Paper plane didn't have a target to hit :(");
                 return;
             }
 
@@ -33,12 +33,12 @@ namespace EunokiBot.Items
             if (fRnd < 0.25f)
             {
                 context.Channel.SendMessageAsync("Paper plane flew straight towards him - he just lost 25XP!");
-                trgModerUser.XP -= 25;
+                trgModelUser.XP -= 25;
             }
             else if(fRnd < 0.5)
             {
                 context.Channel.SendMessageAsync("Paper plane flew straight into his eye! - he just lost 50XP!");
-                trgModerUser.XP -= 50;
+                trgModelUser.XP -= 50;
             }
             else if (fRnd < 0.75)
             {

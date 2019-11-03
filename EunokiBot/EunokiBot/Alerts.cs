@@ -53,6 +53,9 @@ namespace EunokiBot
                 if (modelUser == null)
                     return;
 
+                if (modelUser.Notifications == 0)
+                    return;
+
                 IDMChannel dmChannel = await user.GetOrCreateDMChannelAsync();
                 string sImagePath = Path.Combine(ImageManager.Singleton.FilePath,
                     ImageManager.Singleton.LevelUp(user, modelUser));

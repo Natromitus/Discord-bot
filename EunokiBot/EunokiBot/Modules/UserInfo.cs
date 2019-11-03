@@ -35,7 +35,7 @@ namespace EunokiBot
                 if (sImageFileName == string.Empty)
                     return;
                 
-                RestUserMessage picture = await Context.Channel.SendFileAsync(
+                await Context.Channel.SendFileAsync(
                     Path.Combine(ImageManager.Singleton.FilePath, sImageFileName), string.Empty);
 
                 File.Delete(Path.Combine(ImageManager.Singleton.FilePath, sImageFileName));

@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 using Newtonsoft.Json;
 using System.IO;
+using EunokiBot.Model;
+using EunokiBot.ImageManagment;
 
 namespace EunokiBot
 {
@@ -20,9 +23,10 @@ namespace EunokiBot
             {
                 if (m_arCringe == null)
                 {
-                    string sJson = File.ReadAllText("Resources/cringe.json");
-                    dynamic data = JsonConvert.DeserializeObject<dynamic>(sJson);
-                    m_arCringe = data.ToObject<Dictionary<string, string>>().Values.ToList();
+                    string sJson = File.ReadAllText(Path.Combine(ImageManager.Singleton.FilePath, "cringe.json"));
+                    Dictionary<string, string> data = JsonConvert.DeserializeObject<Dictionary<string, string>>(sJson);
+                    m_arCringe = data.Values.ToList();
+
                 }
 
                 return m_arCringe;
@@ -35,9 +39,9 @@ namespace EunokiBot
             {
                 if (m_arPuns == null)
                 {
-                    string sJson = File.ReadAllText("Resources/puns.json");
-                    dynamic data = JsonConvert.DeserializeObject<dynamic>(sJson);
-                    m_arPuns = data.ToObject<Dictionary<string, string>>().Values.ToList();
+                    string sJson = File.ReadAllText(Path.Combine(ImageManager.Singleton.FilePath, "puns.json"));
+                    Dictionary<string, string> data = JsonConvert.DeserializeObject<Dictionary<string, string>>(sJson);
+                    m_arPuns = data.Values.ToList();
                 }
 
                 return m_arPuns;
@@ -51,9 +55,9 @@ namespace EunokiBot
             {
                 if (m_arFacts == null)
                 {
-                    string sJson = File.ReadAllText("Resources/facts.json");
-                    dynamic data = JsonConvert.DeserializeObject<dynamic>(sJson);
-                    m_arFacts = data.ToObject<Dictionary<string, string>>().Values.ToList();
+                    string sJson = File.ReadAllText(Path.Combine(ImageManager.Singleton.FilePath, "facts.json"));
+                    Dictionary<string, string> data = JsonConvert.DeserializeObject<Dictionary<string, string>>(sJson);
+                    m_arFacts = data.Values.ToList();
                 }
 
                 return m_arFacts;

@@ -49,13 +49,16 @@ namespace EunokiBot.Modules
             TimeSpan span = now - last;
             if (span.TotalMinutes < 1440)
             {
-                _ = dmChannel.SendMessageAsync(Utilities.GetAlert("QUESTSREROLL_COOLDOWN"));
+                if (user.Notifications == 1)
+                    _ = dmChannel.SendMessageAsync(Utilities.GetAlert("QUESTSREROLL_COOLDOWN"));
                 return;
             }
 
             user.AssignQuests();
             user.Reroll = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            _ = dmChannel.SendMessageAsync(Utilities.GetAlert("QUESTSREROLL_EXECUTED"));
+
+            if (user.Notifications == 1)
+                _ = dmChannel.SendMessageAsync(Utilities.GetAlert("QUESTSREROLL_EXECUTED"));
         }
     }
 }

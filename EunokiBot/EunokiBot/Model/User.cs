@@ -20,6 +20,7 @@ namespace EunokiBot.Model
         private string m_sDaily;
         private string m_sReroll;
         private string m_sJoinedDate;
+        private int m_nNotifications;
         private int m_nQuestID1;
         private int m_nQuestID2;
         private int m_nQuestID3;
@@ -72,11 +73,7 @@ namespace EunokiBot.Model
             get { return m_nXP; }
             set
             {
-                if(value < 0)
-                {
-                    if ((m_nXP - value) < 0)
-                        value = 0;
-                }
+                value = Math.Max(0, value);
 
                 if (!SetField(ref m_nXP, value))
                     return;
@@ -137,6 +134,15 @@ namespace EunokiBot.Model
             set
             {
                 SetField(ref m_sJoinedDate, value);
+            }
+        }
+
+        public int Notifications
+        {
+            get { return m_nNotifications; }
+            set
+            {
+                SetField(ref m_nNotifications, value);
             }
         }
 
@@ -222,7 +228,7 @@ namespace EunokiBot.Model
             using (WriteSuspender wSus = new WriteSuspender())
             {
                 UserID = id;
-                Level = 1;
+                Level = Notifications = 1;
                 Warnings = Messages = XP = Money = Quests = DailyCount = 0;
                 JoinedDate = DateTime.Now.ToString("d. MM. yyyy");
                 Daily = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd HH:mm:ss");
@@ -249,10 +255,10 @@ namespace EunokiBot.Model
         {
            SQL.Singleton.Connection.Execute($"INSERT INTO {TABLE_NAME}" +
                 $" ({PRIMARY_KEY}, Warnings, Messages, Level, XP, Money, Quests," +
-                $" DailyCount, Daily, Reroll, JoinedDate," +
+                $" DailyCount, Daily, Reroll, JoinedDate, Notifications," +
                 $" QuestID1, Progress1, QuestID2, Progress2, QuestID3, Progress3)" +
                 $" VALUES (@{PRIMARY_KEY}, @Warnings, @Messages, @Level, @XP, @Money, @Quests," +
-                $" @DailyCount, @Daily, @Reroll, @JoinedDate," +
+                $" @DailyCount, @Daily, @Reroll, @JoinedDate, @Notifications," +
                 $" @QuestID1, @Progress1, @QuestID2, @Progress2, @QuestID3, @Progress3)", user);
         }
 

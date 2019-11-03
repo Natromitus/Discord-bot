@@ -79,6 +79,9 @@ namespace EunokiBot
 
                 user.Money -= item.Price * (nAmount - nResult);
 
+                if (user.Notifications == 0)
+                    return;
+
                 IDMChannel dmChannel = await Context.User.GetOrCreateDMChannelAsync();
                 string sImagePath = Path.Combine(ImageManager.Singleton.FilePath, 
                     ImageManager.Singleton.ItemBought(nID, nAmount - nResult));

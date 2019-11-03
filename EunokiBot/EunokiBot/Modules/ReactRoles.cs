@@ -10,6 +10,8 @@ using System.Collections.Generic;
 
 namespace EunokiBot.Modules
 {
+    [RequireBotPermission(GuildPermission.Administrator)]
+    [RequireUserPermission(GuildPermission.Administrator)]
     [Group("roles"), Alias("role"), Summary("Roles commands.")]
     public class ReactRoles : ModuleBase<SocketCommandContext>
     {

@@ -12,7 +12,8 @@ namespace EunokiBot.Items
             SocketCommandContext context, User user, Inventory inventory, object param = null)
         {
             Random rand = new Random();
-            DiscRefManager.Singleton.ChannelForFun.SendMessageAsync(Utilities.Puns[rand.Next(100)]);
+            string sMention = context.Guild.GetUser(user.UserID).Mention;
+            DiscRefManager.Singleton.ChannelForFun.SendMessageAsync(sMention + ": " + Utilities.Puns[rand.Next(100)]);
         }
     }
 }

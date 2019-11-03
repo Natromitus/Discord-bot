@@ -44,7 +44,9 @@ namespace EunokiBot.Modules
             TimeSpan span = now - last;
             if(span.TotalMinutes < 1440)
             {
+                if (user.Notifications == 1)
                 _ = dmChannel.SendMessageAsync(Utilities.GetAlert("DAILYREWARD_COOLDOWN"));
+
                 return;
             }
 
@@ -53,12 +55,15 @@ namespace EunokiBot.Modules
             GetDailyReward(user, user.DailyCount);
             if (user.DailyCount >= 7)
             {
-                _ = dmChannel.SendMessageAsync(Utilities.GetAlert("DAILYREWARD_FINISHED"));
+                if (user.Notifications == 1)
+                    _ = dmChannel.SendMessageAsync(Utilities.GetAlert("DAILYREWARD_FINISHED"));
+
                 user.DailyCount = 0;
                 return;
             }
 
-            _ = dmChannel.SendMessageAsync(Utilities.GetAlert("DAILYREWARD_CLAIM"));
+            if (user.Notifications == 1)
+                _ = dmChannel.SendMessageAsync(Utilities.GetAlert("DAILYREWARD_CLAIM"));
             return;
         }
 

@@ -246,10 +246,22 @@ namespace EunokiBot.ImageManagment
             #endregion
 
             // Getting User's Avatar
-            System.Net.WebRequest request = System.Net.WebRequest.Create(contextUser.GetAvatarUrl());
-            System.Net.WebResponse response = request.GetResponse();
-            Stream responseStream = response.GetResponseStream();
-            Bitmap bmpAvatar = new Bitmap(responseStream);
+            Bitmap bmpAvatar;
+            Stream responseStream;
+            if (contextUser.GetAvatarUrl() == null)
+            {
+                System.Net.WebRequest request = System.Net.WebRequest.Create(contextUser.GetDefaultAvatarUrl());
+                System.Net.WebResponse response = request.GetResponse();
+                responseStream = response.GetResponseStream();
+            }
+            else
+            {
+                System.Net.WebRequest request = System.Net.WebRequest.Create(contextUser.GetAvatarUrl());
+                System.Net.WebResponse response = request.GetResponse();
+                responseStream = response.GetResponseStream();
+            }
+
+            bmpAvatar = new Bitmap(responseStream);
 
             Bitmap result = new Bitmap(UserInfoDefault);
 

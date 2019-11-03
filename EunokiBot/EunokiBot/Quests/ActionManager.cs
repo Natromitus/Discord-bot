@@ -90,6 +90,9 @@ namespace EunokiBot.Quests
                         inventory.AddItem(13, 1);
                     }
 
+                    if (user.Notifications == 0)
+                        return;
+
                     string sImageFileName = ImageManager.Singleton.QuestCompleted(arCurrentQuestsID[iter], reward, bGoldReward, bMBReward);
                     if (sImageFileName == string.Empty)
                         return;
