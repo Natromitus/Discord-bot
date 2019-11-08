@@ -42,13 +42,12 @@ namespace EunokiBot
 
             SocketTextChannel channel = DiscRefManager.Singleton.ChannelMain;
 
-            RemoveLevels(user, channel);
+            await RemoveLevelsAsync(user, channel);
             IRole role = channel.Guild.Roles.FirstOrDefault(obj => obj.Name.ToString() == $"Level {nLevel}");
-            _ = user.AddRoleAsync(role);
+            await user.AddRoleAsync(role);
 
             if (nLevel != 1)
             {
-                // Send DM of Item used
                 User modelUser = User.Get(ulUserID);
                 if (modelUser == null)
                     return;
@@ -93,13 +92,13 @@ namespace EunokiBot
             _ = await channel.SendMessageAsync($"{user.Mention} has {nWarnings} warnings!");
         }
 
-        private void RemoveLevels(SocketGuildUser user, SocketTextChannel channel)
+        private async Task RemoveLevelsAsync(SocketGuildUser user, SocketTextChannel channel)
         {
             List<IRole> levels = new List<IRole>();
-            for (int i = 1; i < 6; ++i)
+            for (int i = 1; i <= 10; ++i)
                 levels.Add(channel.Guild.Roles.FirstOrDefault(obj => obj.Name.ToString() == $"Level {i}"));
 
-            user.RemoveRolesAsync(levels.AsEnumerable());
+            await user.RemoveRolesAsync(levels.AsEnumerable());
         }
     }
 

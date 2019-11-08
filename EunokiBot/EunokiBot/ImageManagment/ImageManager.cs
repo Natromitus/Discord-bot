@@ -292,26 +292,38 @@ namespace EunokiBot.ImageManagment
                 #endregion
 
                 #region XPBar
-                using (SolidBrush bRectFg = new SolidBrush(Color.FromArgb(90, 130, 190)))
-                using (SolidBrush bRectBg = new SolidBrush(Color.FromArgb(150, 180, 240)))
-                using (SolidBrush bXP = new SolidBrush(Color.Black))
-                using (Font fXP = new Font(FontCollection.Families[0], 8, FontStyle.Regular))
+                if(user.Level >= Data.Singleton.Levels.Count)
                 {
-                    g.FillRectangle(bRectBg, new Rectangle(m_nMargin, m_nMargin + m_nAvatar + 5, m_nAvatar, 20));
+                    using (SolidBrush bRectFg = new SolidBrush(Color.FromArgb(90, 130, 190)))
+                    using (Font fXP = new Font(FontCollection.Families[0], 8, FontStyle.Regular))
+                    {
+                        g.FillRectangle(bRectFg, new Rectangle(m_nMargin, m_nMargin + m_nAvatar + 5, m_nAvatar, 20));
+                        g.DrawString("MAX", fXP, b, new RectangleF(m_nMargin, 179, m_nAvatar, 20), sf);
+                    }
+                }
+                else
+                {
+                    using (SolidBrush bRectFg = new SolidBrush(Color.FromArgb(90, 130, 190)))
+                    using (SolidBrush bRectBg = new SolidBrush(Color.FromArgb(150, 180, 240)))
+                    using (SolidBrush bXP = new SolidBrush(Color.Black))
+                    using (Font fXP = new Font(FontCollection.Families[0], 8, FontStyle.Regular))
+                    {
+                        g.FillRectangle(bRectBg, new Rectangle(m_nMargin, m_nMargin + m_nAvatar + 5, m_nAvatar, 20));
 
-                    //Calculating XP Progress
-                    int nOldLvlGap = 0;
-                    if (user.Level != 1)
-                        nOldLvlGap = Data.Singleton.Levels[user.Level - 1].XPGap;
+                        //Calculating XP Progress
+                        int nOldLvlGap = 0;
+                        if (user.Level != 1)
+                            nOldLvlGap = Data.Singleton.Levels[user.Level - 1].XPGap;
 
-                    int nLvlGap = Data.Singleton.Levels[user.Level].XPGap;
-                    float fWidth = (user.XP - nOldLvlGap) / ((nLvlGap - nOldLvlGap) / 100);
-                    fWidth *= 1.5f;
+                        int nLvlGap = Data.Singleton.Levels[user.Level].XPGap;
+                        float fWidth = (user.XP - nOldLvlGap) / ((nLvlGap - nOldLvlGap) / 100);
+                        fWidth *= 1.5f;
 
-                    g.FillRectangle(bRectFg, new RectangleF(m_nMargin, m_nMargin + m_nAvatar + 5, fWidth, 20));
+                        g.FillRectangle(bRectFg, new RectangleF(m_nMargin, m_nMargin + m_nAvatar + 5, fWidth, 20));
 
-                    g.DrawString(user.XP.ToString() + " / " + Data.Singleton.Levels[user.Level].XPGap.ToString(),
-                    fXP, b, new RectangleF(m_nMargin, 179, m_nAvatar, 20), sf);
+                        g.DrawString(user.XP.ToString() + " / " + Data.Singleton.Levels[user.Level].XPGap.ToString(),
+                            fXP, b, new RectangleF(m_nMargin, 179, m_nAvatar, 20), sf);
+                    }
                 }
                 #endregion
 
@@ -476,10 +488,23 @@ namespace EunokiBot.ImageManagment
         #region Notifications
         public string LevelUp(SocketUser contextUser, User user)
         {
-            System.Net.WebRequest request = System.Net.WebRequest.Create(contextUser.GetAvatarUrl());
-            System.Net.WebResponse response = request.GetResponse();
-            Stream responseStream = response.GetResponseStream();
-            Bitmap bmpAvatar = new Bitmap(responseStream);
+            // Getting User's Avatar
+            Bitmap bmpAvatar;
+            Stream responseStream;
+            if (contextUser.GetAvatarUrl() == null)
+            {
+                System.Net.WebRequest request = System.Net.WebRequest.Create(contextUser.GetDefaultAvatarUrl());
+                System.Net.WebResponse response = request.GetResponse();
+                responseStream = response.GetResponseStream();
+            }
+            else
+            {
+                System.Net.WebRequest request = System.Net.WebRequest.Create(contextUser.GetAvatarUrl());
+                System.Net.WebResponse response = request.GetResponse();
+                responseStream = response.GetResponseStream();
+            }
+
+            bmpAvatar = new Bitmap(responseStream);
 
             Bitmap result = new Bitmap(350, 120);
 

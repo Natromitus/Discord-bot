@@ -13,7 +13,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Patreon.NET">
+      <HintPath>Patreon.NET.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Database\Main.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Patreon.NET.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\AdditionalIcons\01 Check.png">

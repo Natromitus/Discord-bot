@@ -9,6 +9,7 @@ using Discord.WebSocket;
 using Discord.Commands;
 
 using EunokiBot.Model;
+using Patreon.NET;
 
 namespace EunokiBot
 {
@@ -52,6 +53,9 @@ namespace EunokiBot
 
             _alertHandler = new Alerts();
             _client.UserJoined += _alertHandler.OnUserJoin;
+
+            var patreon = new PatreonClient("ACCESS_TOKEN");
+            var pledges = patreon.GetCampaignPledges("CAMPAIGN_ID").Result;
 
             await Task.Delay(-1);
         }
