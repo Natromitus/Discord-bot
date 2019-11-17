@@ -2,7 +2,12 @@
 using System.IO;
 using System.Reflection;
 <<<<<<< HEAD
+<<<<<<< HEAD
 using System.Collections.Generic;
+=======
+>>>>>>> parent of 6b00128... Patreon Init
+=======
+>>>>>>> parent of 6b00128... Patreon Init
 using System.Threading.Tasks;
 using System.Linq;
 
