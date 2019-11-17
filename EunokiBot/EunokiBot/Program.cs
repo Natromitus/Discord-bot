@@ -1,15 +1,15 @@
 ﻿using System;
-using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
-using System.Linq;
+using System.Collections.Generic;
 
 using Discord;
 using Discord.WebSocket; 
-using Discord.Commands;
 
-using EunokiBot.Model;
 using Patreon.NET;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 
 namespace EunokiBot
 {
@@ -20,6 +20,8 @@ namespace EunokiBot
         private DiscordSocketClient _client;
         private CommandHandler _cmdHandler;
         private Alerts _alertHandler;
+
+        
         #endregion
             
         #region Properties
@@ -53,9 +55,6 @@ namespace EunokiBot
 
             _alertHandler = new Alerts();
             _client.UserJoined += _alertHandler.OnUserJoin;
-
-            var patreon = new PatreonClient("ACCESS_TOKEN");
-            var pledges = patreon.GetCampaignPledges("CAMPAIGN_ID").Result;
 
             await Task.Delay(-1);
         }
