@@ -91,17 +91,26 @@ namespace EunokiBot
 
         }
 
-        public void RewardCasual(ulong discordID) => GiveXPBoost(discordID);
-
         public void GiveXPBoost(ulong discordID)
         {
-            // TODO XP BOOST
+            Model.User user = Model.User.Get(discordID);
+            if (user == null)
+                return;
+
+            user.XPBoost = 1;
         }
 
         public void RemoveXPBoost(ulong discordID)
         {
-            // TODO XP BOOST
+            Model.User user = Model.User.Get(discordID);
+            if (user == null)
+                return;
+
+            user.XPBoost = 0;
         }
+
+        public void RewardCasual(ulong discordID)
+            => GiveXPBoost(discordID);
 
         public void RewardSerious(ulong discordID)
         {

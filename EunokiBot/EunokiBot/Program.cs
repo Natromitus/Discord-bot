@@ -38,6 +38,8 @@ namespace EunokiBot
         public async Task MainAsync()
         {
             m_singleton = this;
+
+            /*
             //string sCampaignID = await PatreonManager.Singleton.GetCampaignID();
 
             List<Pledge> patrons = new List<Pledge>();
@@ -45,6 +47,7 @@ namespace EunokiBot
             JsonApiSerializerSettings settings = new JsonApiSerializerSettings();
             PledgeListData document = JsonConvert.DeserializeObject<PledgeListData>(json, settings);
             //patrons.AddRange(document.Data);
+            */
 
             if (String.IsNullOrEmpty(Config.Bot.token))
                 return;

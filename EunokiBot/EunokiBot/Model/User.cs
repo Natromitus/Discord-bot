@@ -14,6 +14,7 @@ namespace EunokiBot.Model
         private int m_nMessages;
         private int m_nLevel;
         private int m_nXP;
+        private int m_nXPBoost;
         private int m_nMoney;
         private int m_nQuests;
         private int m_nDailyCount;
@@ -73,6 +74,9 @@ namespace EunokiBot.Model
             get { return m_nXP; }
             set
             {
+                if (XPBoost == 1 || value >= m_nXP)
+                    value *= 2;
+
                 value = Math.Max(0, value);
 
                 if (!SetField(ref m_nXP, value))
@@ -80,6 +84,18 @@ namespace EunokiBot.Model
 
                 if (m_nXP >= Data.Singleton.Levels[Level].XPGap)
                     ++Level;
+            }
+        }
+
+        public int XPBoost
+        {
+            get { return m_nXPBoost; }
+            set
+            {
+                value = Math.Max(0, value);
+
+                if (!SetField(ref m_nXPBoost, value))
+                    return;
             }
         }
 
@@ -229,7 +245,7 @@ namespace EunokiBot.Model
             {
                 UserID = id;
                 Level = Notifications = 1;
-                Warnings = Messages = XP = Money = Quests = DailyCount = 0;
+                Warnings = Messages = XP = XPBoost = Money = Quests = DailyCount = 0;
                 JoinedDate = DateTime.Now.ToString("d. MM. yyyy");
                 Daily = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd HH:mm:ss");
                 Reroll = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
@@ -254,10 +270,10 @@ namespace EunokiBot.Model
         public static void NewRecord(User user)
         {
            SQL.Singleton.Connection.Execute($"INSERT INTO {TABLE_NAME}" +
-                $" ({PRIMARY_KEY}, Warnings, Messages, Level, XP, Money, Quests," +
+                $" ({PRIMARY_KEY}, Warnings, Messages, Level, XP, XPBoost, Money, Quests," +
                 $" DailyCount, Daily, Reroll, JoinedDate, Notifications," +
                 $" QuestID1, Progress1, QuestID2, Progress2, QuestID3, Progress3)" +
-                $" VALUES (@{PRIMARY_KEY}, @Warnings, @Messages, @Level, @XP, @Money, @Quests," +
+                $" VALUES (@{PRIMARY_KEY}, @Warnings, @Messages, @Level, @XP, @XPBoost, @Money, @Quests," +
                 $" @DailyCount, @Daily, @Reroll, @JoinedDate, @Notifications," +
                 $" @QuestID1, @Progress1, @QuestID2, @Progress2, @QuestID3, @Progress3)", user);
         }
