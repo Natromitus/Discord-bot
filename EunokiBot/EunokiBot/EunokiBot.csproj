@@ -8,6 +8,8 @@
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.60.6" />
     <PackageReference Include="Discord.Net" Version="2.1.1" />
+    <PackageReference Include="JsonApiSerializer" Version="1.7.3" />
+    <PackageReference Include="newtonsoft.json" Version="12.0.3" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.111" />
     <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
   </ItemGroup>
@@ -21,6 +23,9 @@
   <ItemGroup>
     <None Update="Database\Main.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="patreon.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Patreon.NET.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

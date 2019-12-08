@@ -57,7 +57,7 @@ namespace EunokiBot.ImageManagment
         {
             get
             {
-                return Assembly.GetEntryAssembly().Location.Replace(@"EunokiBot.dll", @"Resources"); ;
+                return Assembly.GetEntryAssembly().Location.Replace(@"EunokiBot.dll", @"Resources");
             }
         }
 
