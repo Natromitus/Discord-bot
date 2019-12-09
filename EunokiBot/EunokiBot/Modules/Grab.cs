@@ -21,7 +21,7 @@ namespace EunokiBot.Modules
                 return;
 
             User user = User.Get(Context.User.Id);
-            user.XP += 83;
+            user.AddXP(83);
             --Data.Singleton.Gums;
             Program.Singleton.AlertsHandler.GumGrab(Context.User.Id);
         }
@@ -39,13 +39,13 @@ namespace EunokiBot.Modules
 
             if (fRnd < 0.5f)
             {
-                user.XP += 250;
+                user.AddXP(250);
                 --Data.Singleton.Cakes;
                 Program.Singleton.AlertsHandler.CakeGrab(Context.User.Id, false);
             }
             else
             {
-                user.XP -= 250;
+                user.AddXP(-250);
                 --Data.Singleton.Cakes;
                 Program.Singleton.AlertsHandler.CakeGrab(Context.User.Id, true);
             }

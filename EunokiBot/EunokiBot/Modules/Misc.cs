@@ -32,6 +32,39 @@ namespace EunokiBot.Modules
             }
         }
 
+        [Command("patreon refresh"), Alias("patreon", "patreon ref")]
+        public async Task PatreonRefreshAsync()
+        {
+            // Check Patreon Refresh cooldown
+            // Early return if cooldown
+
+            // Get data from Patreon
+
+            // Compare IDs
+
+            // Add Patron role to users
+
+            // Find user's who are not paying anymore - Delete their Patron rewards
+
+            // Check if it's month since last rewards if yes then distribute them again
+        }
+
+        [RequireBotPermission(GuildPermission.Administrator)]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        [Command("patreon -f refresh")]
+        public async Task PatreonForceRefreshAsync()
+        {
+            // Get data from Patreon
+
+            // Compare IDs
+
+            // Add Patron role to users
+
+            // Find user's who are not paying anymore - Delete their Patron rewards
+
+            // Check if it's month since last rewards if yes then distribute them again
+        }
+
         [Command("register")]
         public async Task RegisterAsync()
         {

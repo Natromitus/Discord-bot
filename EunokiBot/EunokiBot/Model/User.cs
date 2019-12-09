@@ -53,7 +53,7 @@ namespace EunokiBot.Model
                 if (!SetField(ref m_nMessages, value))
                     return;
 
-                XP += SQL.Singleton.GetValue<int>("Levels", "XPPerMessage", "Level", Level);
+                AddXP(SQL.Singleton.GetValue<int>("Levels", "XPPerMessage", "Level", Level));
             }
         }
 
@@ -74,9 +74,6 @@ namespace EunokiBot.Model
             get { return m_nXP; }
             set
             {
-                if (XPBoost == 1 || value >= m_nXP)
-                    value *= 2;
-
                 value = Math.Max(0, value);
 
                 if (!SetField(ref m_nXP, value))
@@ -92,10 +89,7 @@ namespace EunokiBot.Model
             get { return m_nXPBoost; }
             set
             {
-                value = Math.Max(0, value);
-
-                if (!SetField(ref m_nXPBoost, value))
-                    return;
+                SetField(ref m_nXPBoost, value);
             }
         }
 
@@ -276,6 +270,14 @@ namespace EunokiBot.Model
                 $" VALUES (@{PRIMARY_KEY}, @Warnings, @Messages, @Level, @XP, @XPBoost, @Money, @Quests," +
                 $" @DailyCount, @Daily, @Reroll, @JoinedDate, @Notifications," +
                 $" @QuestID1, @Progress1, @QuestID2, @Progress2, @QuestID3, @Progress3)", user);
+        }
+
+        public void AddXP(int value)
+        {
+            if (XPBoost == 1 && value >= 0)
+                value *= 2;
+
+            XP += value;
         }
 
         public bool AddProgressOnIndex(int index, int maxProgress)

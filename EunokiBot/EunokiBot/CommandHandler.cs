@@ -59,7 +59,8 @@ namespace EunokiBot
                 sMessage.HasMentionPrefix(_client.CurrentUser, ref nArsPos))
             {
                 if (sMessage.Channel.Id == Convert.ToUInt64(Config.Bot.channelBotCommands) ||
-                    sMessage.Channel.GetType() == typeof(SocketDMChannel))
+                    sMessage.Channel.GetType() == typeof(SocketDMChannel) ||
+                    sMessage.Content.Contains("grab"))
                 {
                     IResult result = await _service.ExecuteAsync(context, nArsPos, services: null);
                     if (!result.IsSuccess && result.Error == CommandError.UnknownCommand)

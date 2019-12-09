@@ -72,7 +72,7 @@ namespace EunokiBot.Quests
                     bool bGoldReward = false, bMBReward = false;
 
                     QuestReward reward = QuestReward.GetRewardByDifficulty(quest.Difficulty);
-                    user.XP += reward.XP;
+                    user.AddXP(reward.XP);
                     ++user.Quests;
 
                     float fRnd1 = (float)new Random().NextDouble();

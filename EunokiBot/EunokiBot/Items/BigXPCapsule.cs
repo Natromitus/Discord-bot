@@ -10,7 +10,7 @@ namespace EunokiBot.Items
         protected override void OnItemUse(
             SocketCommandContext context, User user, Inventory inventory, object param = null)
         {
-            user.XP += 1000;
+            user.AddXP(1000);
         }
     }
 }
